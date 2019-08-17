@@ -1,0 +1,17 @@
+ DecrypttData←{
+     0::1
+     _←##.Init''
+
+     ns←⎕NEW ##.Core.Secure
+     ns.PlainData←⎕A[?100⍴24]
+     ns.Key←'norbert'
+     _←ns.Encrypt
+
+     ns2←⎕NEW ##.Core.Secure
+     ns2.IVK←ns.IVK
+     ns2.Key←ns.Key
+     ns2.CipherData←ns.CipherData
+     _←ns2.Decrypt
+
+     ns.PlainData≢ns2.PlainData
+ }

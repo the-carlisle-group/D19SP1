@@ -1,0 +1,13 @@
+ fromdec←{
+     ⎕IO ⎕ML←0 1                                ⍝ Decimal from hexadecimal
+     ⍺←0                                         ⍝ unsigned by default.
+     1<⍴⍴⍵:↑⍺ ∇¨↓⍵                               ⍝ vector-wise:
+     0=≢⍵:0                                      ⍝ dec'' → 0.
+     1≠≡,⍵:⍺ ∇¨⍵                                 ⍝ simple-array-wise:
+     ' '=⊃⍵:⍺ ∇ 1↓⍵                              ⍝ ignoring leading and
+     ' '=⊃⌽⍵:⍺ ∇ ¯1↓⍵                            ⍝ ... trailing blanks.
+     ' '∊⍵:⍺ ∇¨{1↓¨(⍵=' ')⊂⍵}' ',⍵               ⍝ blank-separated:
+     v←16|'0123456789abcdef0123456789ABCDEF'⍳⍵   ⍝ hex digits.
+     11::'Too big'⎕SIGNAL 11                     ⍝ number too big.
+     (16⊥v)-⍺×(8≤⊃v)×16*≢v                       ⍝ (signed) decimal number.
+ }

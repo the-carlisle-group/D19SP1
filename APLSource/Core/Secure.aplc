@@ -1,0 +1,80 @@
+:Class Secure
+
+
+    :field public readonly CypherType←#.DCL.Crypt.CIPH_AES_GCM
+    :field public readonly HashType←#.DCL.Crypt.HASH_SHA256
+    :field private  key←''
+    :field private plainData←''
+    :field public CipherData←''
+    :field public Digest←''
+    :field private dclRef
+    :field private ivk←''
+
+    ∇ const0
+      :Access public
+      :Implements constructor
+     
+      dclRef←#.DCL.Crypt
+      ivk←dclRef.Random 12
+    ∇
+
+    ∇ {Z}←Encrypt;tKey
+      :Access public instance
+      tKey←HashType dclRef.Hash Key
+      CipherData Digest←(CypherType tKey IVK)#.DCL.Crypt.Encrypt PlainData
+      Z←0⍴''
+    ∇
+
+    ∇ {Z}←Decrypt;tKey
+      :Access public instance
+      tkey←HashType dclRef.Hash key
+      PlainData Digest←(CypherType tkey IVK)#.DCL.Crypt.Decrypt CipherData
+      Z←0⍴''
+    ∇
+
+    :property Key
+    :access public instance
+
+        ∇ r←get
+          r←key
+        ∇
+
+        ∇ set v
+          testPropertyASCII v
+          key←v.NewValue
+        ∇
+    :endproperty
+
+    :property IVK
+    :access public instance
+        ∇ r←get
+          r←ivk
+        ∇
+
+        ∇ set v
+          testPropertyASCII v
+          ivk←v.NewValue
+        ∇
+    :endproperty
+
+    :property PlainData
+    :access public instance
+
+        ∇ r←get
+          r←plainData
+        ∇
+
+        ∇ set v
+          testPropertyASCII v
+          plainData←v.NewValue
+        ∇
+    :endproperty
+
+    toASCII←{'UTF-8'⎕UCS'UTF-8'⎕UCS ⍵}
+
+      testPropertyASCII←{
+          80=⎕DR v.NewValue:_←0
+          (v.Name,' must be ⎕DR=80')⎕SIGNAL 6
+      }
+
+:EndClass

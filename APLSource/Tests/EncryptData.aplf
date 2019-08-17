@@ -1,0 +1,9 @@
+ EncryptData←{
+     0::1
+     _←##.Init''
+     ns←⎕NEW ##.Core.Secure
+     ns.Key←'norbert'
+     ns.PlainData←⎕UCS?100⍴256
+     _←ns.Encrypt
+     0
+ }
