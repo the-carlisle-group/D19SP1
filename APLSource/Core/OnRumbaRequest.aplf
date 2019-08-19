@@ -1,0 +1,8 @@
+ OnRumbaRequest←{
+     request←⍵
+     _←LogRequestToS3&⍵
+     response←#.CarlisleGroup.Rumba.Core.NewResponse request
+     'expression'≡(819⌶)0⊃request.Segments:response ProcessExpression request
+     response.StatusCode←404
+     response
+ }

@@ -1,5 +1,0 @@
- Init←{
-     _←#.DCL.Crypt.Init #.DCL.AcreConfig.ProjectFolder,'Assets/DCL/'
-    ⍝  hostname∘←GetHostNameHash''
-     1:_←0
- }

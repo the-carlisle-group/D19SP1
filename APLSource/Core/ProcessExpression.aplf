@@ -1,0 +1,26 @@
+ ProcessExpression←{
+     request←⍵
+     response←⍺
+     ns←⎕NS''
+     ns.expression←1⊃request.Segments
+     ns.result←{0::⎕NULL ⋄ ⍎⍵}ns.expression
+     ns.dr←⎕DR ns.result
+
+     aws←#.CarlisleGroup.AWSTools
+     c←GetS3Client Settings
+     s←aws.S3.Service.New c
+     b←aws.S3.Bucket.New s
+     b.Name←Settings.AWS_Bucket
+     b.Region←Settings.AWS_Region
+     ob←aws.S3.Object.New b
+     ob.ACL←'public-read'
+     ob.ContentType←'application/json'
+     ob.Value←⎕JSON ns
+     ob.Folder←'responses'
+     ob.Key←(' '~⍨∊⍕⎕TS),'.json'
+     ok←ob.Put
+
+     response.StatusCode←301
+     response.Headers←⊂'Location'ob.URI
+     response
+ }

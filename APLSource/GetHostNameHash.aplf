@@ -1,3 +1,0 @@
- GetHostNameHash←{
-     ∊#.AWS.Utils.ToHex ⎕UCS #.DCL.Crypt.HASH_MD5 #.DCL.Crypt.Hash↑⎕CMD'hostname'
- }

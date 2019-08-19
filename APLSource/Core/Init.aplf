@@ -1,0 +1,15 @@
+ Init←{
+     _←#.DCL.Crypt.Init #.DCL.AcreConfig.ProjectFolder,'Assets/DCL/'
+     Settings∘←⎕NS''
+⍝     Settings.AWS_AccessKey←''
+⍝     Settings.AWS_SecretKey←''
+     Settings.AWS_Bucket←'myapp-norbert'  ⍝ must be valid uri structure
+     Settings.AWS_Region←'us-east-1'
+     _←CreateAppBucket Settings
+
+     _server∘←StartServer''
+     1:_←0
+
+    ⍝ docker startup with hostname
+    ⍝ docker run -h thisismyhostname -v c:/temp:/data dyalog/dyalog /data/dockertest.dws
+ }

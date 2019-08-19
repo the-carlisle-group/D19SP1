@@ -1,0 +1,3 @@
+ GetS3Client←{
+     #.CarlisleGroup.AWSTools.Client.New
+ }
