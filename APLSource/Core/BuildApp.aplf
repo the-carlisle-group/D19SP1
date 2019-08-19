@@ -1,0 +1,14 @@
+ BuildApp←{
+     path←⍵
+     ok←{0::0 ⋄ ⎕THIS._server #.CarlisleGroup.Rumba.Core.Close 0}0
+     _←⎕EX'_server'
+     _←#.CarlisleGroup.Rumba.⎕EX'DRC'
+     _←⎕WA
+     _←3 ⎕MKDIR ⍵
+     #.⎕LX←##.AcreConfig.StartUp
+     wsPath←path,'/app.dws'
+     _←0 ⎕SAVE wsPath
+     _←(⍵,'\Assets')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'Assets'
+     _←(⍵,'\keys.json')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'keys.json'
+     ⎕SE.UCMD'open ',⍵
+ }

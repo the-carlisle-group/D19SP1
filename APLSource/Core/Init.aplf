@@ -1,17 +1,28 @@
  Init←{
+     _←⎕WA
+     ##.AcreConfig.ProjectFolder←{
+         'CLEAR WS'≡⎕WSID:⍵
+         path←('\\'⎕R'/')↑⎕NPARTS ⎕WSID
+         ax←path,'Assets/'
+         #.DCL.AcreConfig.ProjectFolder←ax,'DyalogDCL/'
+         #.CarlisleGroup.Rumba.AcreConfig.ProjectFolder←ax,'Rumba/'
+         path
+     }##.AcreConfig.ProjectFolder
      _←#.DCL.Crypt.Init #.DCL.AcreConfig.ProjectFolder,'Assets/DCL/'
      _←#.CarlisleGroup.Rumba.Core.InitConga''
      _←#.CarlisleGroup.AWSTools.Init
      Settings∘←⎕NS''
-⍝     Settings.AWS_AccessKey←''
-⍝     Settings.AWS_SecretKey←''
+     keys←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'keys.json'
+     Settings.AWS_AccessKey←keys.AccessKey
+     Settings.AWS_SecretKey←keys.SecretKey
      Settings.AWS_Bucket←'myapp-norbert'  ⍝ must be valid uri structure
      Settings.AWS_Region←'us-east-1'
      _←CreateAppBucket Settings
 
      _server∘←StartServer''
      ⎕←'Server is running!'
-     1:_←0
+     'CLEAR WS'≡⎕WSID:_←0
+     ⎕DQ'.'
 
     ⍝ docker startup with hostname
     ⍝ docker run -h thisismyhostname -v c:/temp:/data dyalog/dyalog /data/dockertest.dws

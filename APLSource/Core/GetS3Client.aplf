@@ -1,3 +1,6 @@
  GetS3Client←{
-     #.CarlisleGroup.AWSTools.Client.New
+     c←#.CarlisleGroup.AWSTools.Client.New
+     c.AccessKey←⍵.AWS_AccessKey
+     c.SecretKey←⍵.AWS_SecretKey
+     c
  }
