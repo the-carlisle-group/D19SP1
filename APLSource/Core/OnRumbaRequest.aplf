@@ -1,7 +1,9 @@
  OnRumbaRequest←{
      request←⍵
-     _←LogRequestToS3&⍵
+     request.QueryParameters[;0]←(819⌶)¨request.QueryParameters[;0]         ⍝ query param names are not case sensitive
      response←#.CarlisleGroup.Rumba.Core.NewResponse request
+     response.logURI←LogRequestToS3 ⍵
+     0::response SendError ⎕DMX
      'expression'≡(819⌶)0⊃request.Segments:response ProcessExpression request
      response.StatusCode←404
      response

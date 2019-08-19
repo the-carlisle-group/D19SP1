@@ -4,10 +4,9 @@
      _←#.CarlisleGroup.Rumba.Core.InitConga''
      s←#.CarlisleGroup.Rumba.Core.NewServer 0
      s.OnRequest←(⍕⎕THIS),'.OnRumbaRequest'
-     s.DisplayRequests←1
      s.Trap←0
      s.Port←8080
-     s.(LogConga LogHTTP LogRumba LogHTTPToSession)←1
+     s.(LogConga LogHTTP LogRumba LogHTTPToSession DisplayRequests)←0
      s.Secure←0
      r←s #.CarlisleGroup.Rumba.Core.Start 0
      s

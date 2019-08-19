@@ -13,5 +13,5 @@
      ob.Folder←'logs'
      ob.Key←'request-',(' '~⍨∊⍕⎕TS),'.txt'
      ok←ob.Put
-     ob
+     ob.URI
  }

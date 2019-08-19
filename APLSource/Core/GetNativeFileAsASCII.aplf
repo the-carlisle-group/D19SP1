@@ -1,0 +1,6 @@
+ GetNativeFileAsASCII←{
+     tn←⍵ ⎕NTIE 0 32
+     bytes←⎕NREAD tn 80 ¯1 0
+     _←⎕NUNTIE tn
+     bytes
+ }

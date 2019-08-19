@@ -1,0 +1,8 @@
+ GetTempFile←{
+     ext←(0=≢⍵)⊃⍵'.tmp'
+     td←GetTempDir''
+     td,←'/temp-'
+     td,←⍕10000000000×?0
+     td,←ext
+     td
+ }

@@ -1,5 +1,7 @@
  Init←{
      _←#.DCL.Crypt.Init #.DCL.AcreConfig.ProjectFolder,'Assets/DCL/'
+     _←#.CarlisleGroup.Rumba.Core.InitConga''
+     _←#.CarlisleGroup.AWSTools.Init
      Settings∘←⎕NS''
 ⍝     Settings.AWS_AccessKey←''
 ⍝     Settings.AWS_SecretKey←''
@@ -8,6 +10,7 @@
      _←CreateAppBucket Settings
 
      _server∘←StartServer''
+     ⎕←'Server is running!'
      1:_←0
 
     ⍝ docker startup with hostname
