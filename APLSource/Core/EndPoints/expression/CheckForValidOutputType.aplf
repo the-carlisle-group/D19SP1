@@ -1,5 +1,5 @@
- checkForValidOutputType←{
-     valid←'JSON' 'DCF'⍝'DWS'
+ CheckForValidOutputType←{
+     valid←'JSON' 'DCF' 'XML'⍝'DWS'
      ot←⍵
      (⊆⍵)∊valid:⍵
      ⎕SIGNAL⊂('EN' 422)('EM' 'Invalid output type')('Message'('Must be one of: ',¯2↓∊valid,¨⊂', '))

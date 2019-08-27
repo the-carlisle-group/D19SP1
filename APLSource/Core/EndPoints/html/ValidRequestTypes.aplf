@@ -1,0 +1,5 @@
+ Z←ValidRequestTypes
+ ⍝ Column1      Column2
+ ⍝ Method List  Accepted content type for method
+ Z←0 2⍴''
+ Z⍪←'GET'(⊆'*/*') ⍝ Any

@@ -1,14 +1,32 @@
  BuildApp←{
-     path←⍵
-     ok←{0::0 ⋄ ⎕THIS._server #.CarlisleGroup.Rumba.Core.Close 0}0
-     _←⎕EX'_server'
-     _←#.CarlisleGroup.Rumba.⎕EX'DRC'
+     path←{
+         0≠≢⍵:⍵
+         folder←(739⌶0),'/app-'
+         folder,←QTSToString ⎕TS
+         folder
+     }⍵
+
+     ⍝ clean up current application runtime and reset necessary properties
+     _←ResetRumbaConga''
+     _←⎕EX'Settings' '_server' 'rumba' 'dcl' 'aws' 'BucketRef' 'Jobs'
      _←⎕WA
-     _←3 ⎕MKDIR ⍵
-     #.⎕LX←##.AcreConfig.StartUp
-     wsPath←path,'/app.dws'
+
+     dwsName←'app.dws'
+     _←3 ⎕NDELETE path
+
+     _←3 ⎕MKDIR path
+     #.⎕LX←'0 ',##.AcreConfig.StartUp
+     wsPath←('\\'⎕R'/')path,'/app.dws'
+     _←(2400⌶)1 ⍝ drop all stops!
      _←0 ⎕SAVE wsPath
-     _←(⍵,'\Assets')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'Assets'
-     _←(⍵,'\keys.json')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'keys.json'
-     ⎕SE.UCMD'open ',⍵
+     _←(path,'\Assets')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'Assets'
+     _←(path,'\settings.json')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'settings.json'
+     settings←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'settings.json'
+     port←⍕settings.Port
+     dockerCMD←'docker run -p 4502:4502  -p ',port,':',port,' -v ',path,':/data dyalog/dyalog /data/app.dws' ⍝ -h norbert  / host
+     _←dockerCMD ⎕NPUT(path,'\docker.bat')1
+     ⎕←path
+     ⎕←dockerCMD
+     _←⎕SE.UCMD'open ',path
+
  }

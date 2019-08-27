@@ -1,17 +1,11 @@
  LogRequestToS3←{
      request←⍵
-     aws←#.CarlisleGroup.AWSTools
-     c←GetS3Client Settings
-     s←aws.S3.Service.New c
-     b←aws.S3.Bucket.New s
-     b.Name←Settings.AWS_Bucket
-     b.Region←Settings.AWS_Region
-     ob←aws.S3.Object.New b
-     ob.ACL←'public-read'
+     ob←aws.S3.Object.New BucketRef
+     ⍝ob.ACL←'public-read'
      ob.ContentType←'text/plain'
      ob.Value←request.Header
      ob.Folder←'logs'
      ob.Key←'request-',(' '~⍨∊⍕⎕TS),'.txt'
      ok←ob.Put
-     ob.URI
+     ⍺.metadata.requestLogUri←ob.URI
  }

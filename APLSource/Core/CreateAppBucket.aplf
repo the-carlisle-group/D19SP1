@@ -1,9 +1,10 @@
  CreateAppBucket←{
      c←GetS3Client ⍵
-     s←#.CarlisleGroup.AWSTools.S3.Service.New c
-     b←#.CarlisleGroup.AWSTools.S3.Bucket.New s
-     b.Name←⍵.AWS_Bucket
-     b.Region←'us-east-1'
+     b←aws.S3.Bucket.New c Settings.AWS_Bucket
+     e←b.Exists
+     ⎕←'S3 bucket ',b.Name,' does ',((~e)/'not '),'exist.'
+     e:b
      _←b.Create
+     ⎕←'S3 bucket ',b.Name,' created in region ',b.Region,'.'
      b
  }

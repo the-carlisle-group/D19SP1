@@ -1,10 +1,7 @@
  CreateRequest←{
      ns←⎕NS''
-     ns.OutputType←'JSON'->not implemented ⍝'CSV' 'HTML'   'DCF' 'DWS'
-     ns.CanSplit←1  ⍝ can the result be split up if WS_FULL
-     ns.Function←⎕NULL  ⍝ ⎕NR or function.
-     ns.LeftArgs←⎕NULL
-     ns.RightArgs←⎕NULL
+     ns.outputType←'DCF'⍝'JSON'->not implemented ⍝'CSV' 'HTML'   'DCF' 'DWS'
+     ns.function←⎕NULL  ⍝ ⎕NR or function.
      ns
 
  }

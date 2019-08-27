@@ -1,0 +1,10 @@
+ GetStatic←{
+     response←⍺
+     path←HtmlDir,1↓⍵
+     0=⎕NEXISTS path:response{⍺.StatusCode←404 ⋄ ⍺}''
+     response.IsFile←1
+     response.ContentType←##.##.rumba.Core.FilenameToContentType path
+     response.StatusCode←200
+     response.FilePath←path
+     response
+ }

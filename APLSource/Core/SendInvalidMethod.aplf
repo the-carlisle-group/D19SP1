@@ -1,0 +1,5 @@
+ SendInvalidMethod←{
+     response←⍺
+     response.StatusCode←501
+     response
+ }

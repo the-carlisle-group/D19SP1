@@ -1,0 +1,6 @@
+ GetFileExtFromOutputType←{
+     ⍵≡'JSON':'.json'
+     ⍵≡'XML':'.xml'
+     ⍵≡'DCF':'.dcf'
+     'Invalid OutputType requested.'⎕SIGNAL 502
+ }

@@ -1,0 +1,29 @@
+ Z←response GET request;accept;jobid;acceptedTypes;jobindex;jobns
+
+ :If 1=≢request.Segments
+     response.StatusCode←200
+
+     :Select response.ContentType
+     :Case 'application/json'
+         response.Content←⎕JSON⌽##.##.Jobs
+     :Case 'text/html'
+         Z←response ##.html.GetStatic'/html/jobviewer/index.html'
+         :Return
+     :Else
+         'Jobs response not implemented for accept type'⎕SIGNAL 11
+     :EndSelect
+
+ :Else
+     jobid←1⊃request.Segments
+     jobindex←Jobs.id⍳⊆jobid
+     →(jobindex=≢Jobs)/0
+     jobns←jobindex⊃Jobs
+     response.StatusCode←200
+
+     :Select accept
+     :Case 'application/json'
+         response.Content←⎕JSON jobns
+     :Case 'text/html'
+         response.Content←GetJobHTML jobns
+     :EndSelect
+ :EndIf

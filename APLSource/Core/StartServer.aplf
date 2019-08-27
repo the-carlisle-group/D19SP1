@@ -1,13 +1,20 @@
  StartServer←{
-     ok←{0::0 ⋄ ⎕THIS._server #.CarlisleGroup.Rumba.Core.Close 0}0
-     _←#.CarlisleGroup.Rumba.⎕EX'DRC'
-     _←#.CarlisleGroup.Rumba.Core.InitConga''
-     s←#.CarlisleGroup.Rumba.Core.NewServer 0
+     ok←{0::0 ⋄ ⎕THIS._server rumba.Core.Close 0}0
+     _←rumba.⎕EX'DRC'
+     _←rumba.Core.InitConga''
+     s←rumba.Core.NewServer 0
      s.OnRequest←(⍕⎕THIS),'.OnRumbaRequest'
-     s.Trap←0
-     s.Port←8080
-     s.(LogConga LogHTTP LogRumba LogHTTPToSession DisplayRequests)←0
-     s.Secure←0
-     r←s #.CarlisleGroup.Rumba.Core.Start 0
+     s.Trap←1
+     s.Port←Settings.Port
+     s.LogConga←0
+     s.LogHTTP←0
+     s.LogRumba←0
+     s.DisplayRequests←0
+     s.LogHTTPToSession←Settings.LogToSession≡⊂'true'
+     s.Folder←'c:\temp\rumba\'
+     s.Secure←1
+     s.X509←↑rumba.Conga.X509Cert.ReadCertFromFile pf,Settings.SSLCertPath
+     s.X509.KeyOrigin←'DER'(pf,Settings.SSLKeyPath)
+     r←s rumba.Core.Start 0
      s
  }

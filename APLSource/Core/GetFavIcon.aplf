@@ -1,0 +1,6 @@
+ GetFavIcon←{
+     response←⍺
+     response.IsFile←1
+     response.FilePath←pf,'Assets/Runtime/favicon.ico'
+     response
+ }

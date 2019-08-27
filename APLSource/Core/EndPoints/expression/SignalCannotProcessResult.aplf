@@ -1,0 +1,2 @@
+ SignalCannotProcessResult
+ ⎕SIGNAL⊂('EN' 500)('EM' 'Cannot serialize result to output.  Try a different type.')('Message' 'OutputType DCF should never fail...')

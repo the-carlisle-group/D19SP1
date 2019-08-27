@@ -1,0 +1,14 @@
+ ResetRumbaConga←{
+     ok←{0::0 ⋄ ⎕THIS._server rumba.Core.Close 0}0
+     _←{0::0 ⋄ _←rumba.DRC.Close'.' ⋄ 0}''
+     _←⎕EX'rumba.DRC'
+     _←rumba.Conga.X509Cert.LDRC←''
+     _←rumba.Conga.⎕EX¨{('⍙'=↑¨⍵)/⍵}rumba.Conga.⎕NL ¯3
+
+     ⍝⍝ How do I delete this instance?
+     r←⎕INSTANCES rumba.Conga.LIB
+     _←{0::0 ⋄ ⍵.RootName←⊂'junk!' ⋄ 0}r
+     ⍝⍝ overwriting seems to do the trick for now
+     _←⎕WA
+     1:_←0
+ }

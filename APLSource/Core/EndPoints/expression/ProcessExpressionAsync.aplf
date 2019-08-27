@@ -1,0 +1,79 @@
+ Z←response ProcessExpressionAsync request;ns;c;b;ob;ok;st;tid;finished;uri
+ Z←response
+ →(1=≢request.Segments)/0               ⍝ missing expression in path
+
+ :If request.Method≡'OPTION'
+
+     :Return
+ :EndIf
+
+ ns←CreateJobRequest''
+ ns.outputType←1(819⌶)request rumba.Core.GetQueryParameter'outputtype'
+ ns.outputType←(0=≢ns.outputType)⊃ns.outputType'JSON'
+ ns.outputType←checkForValidOutputType ns.outputType
+ ns.expression←1⊃request.Segments
+
+ ob←aws.S3.Object.New BucketRef
+ ob.Folder←'responses'
+ ob.ContentType←GetContentTypeFromOutputType ns.outputType
+ ob.Key←ns.id,GetFileExtFromOutputType ns.outputType
+ ob.MetaData←('x-amz-meta-author'⎕AN)('x-amz-meta-type'ns.outputType)('x-amz-meta-apl-version'(¯1↓∊#.APLVersion,¨' '))
+
+ ⍝ Create job state
+ Jobs,←ns
+ ns.status←'new'
+ ns←ns.id UpdateJob''
+ response.metadata.expression←ns.expression  ⍝ attach to result object
+ response.metadata.jobResource←ns.jobResource ⍝ set by UpdateJob
+
+ st←aws.Utils.GetEpochTime
+
+ tid←ob{
+     ns←⍵
+
+     0::⎕DMX{
+         ⍵.message←⎕JSON ⍺.EM
+         ⍵.status←'error'
+         _←⍵.id UpdateJob'error'
+         ⎕SIGNAL⊂('EN' 400)('EM' 'Expression did produce a result.')('Message'⍺.EM) ⍝('Message'('Expression: ',⍺.expression))⊥
+     }⍵
+
+     ns.status←'executing'
+     ok←ns.id UpdateJob''
+     d←ns processResponse⍎⍵.expression
+     ns.resultSize←≢d
+     useMultiPart←ns.resultSize>⍺.MultiPartBlockSize
+
+     ns.status←'uploading'
+     ns←ns.id UpdateJob''
+
+     ⍺.ContentType←GetContentTypeFromOutputType ns.outputType
+     ⍺.Value←d
+     pmp←'PutMultiPart '' ''''',ns.id,'''''∘',(⍕⎕THIS),'.UpdateJob'''
+     putType←useMultiPart⊃'Put'pmp
+     ns.s3PutType←useMultiPart⊃'Put' 'PutMultiPart'
+     ok←⍺⍎putType
+
+     ns.resource←⍺.GeneratePreSignedGet 360 ⍝ 5 min
+     ns.linkExpires←Utils.GetHttpDateTime 360
+     ns.status←'success'
+     ns←ns.id UpdateJob''
+     1:_←0
+ }&ns
+
+ finished←1
+
+ :While (aws.Utils.GetEpochTime-st)<5
+     ⎕DL 0.005
+     finished←~tid∊⎕TNUMS
+ :Until finished
+
+ :If finished
+     uri←ob.GeneratePreSignedGet 3600  ⍝ valid for 1hr
+     response.StatusCode←307 ⍝ 307 = tempoarary redirect & 301 permanent redirect
+     response.Headers←⊂'Location'ns.resource
+ :Else
+     response.StatusCode←202     ⍝ job accepted but not done
+     response.Headers←⊂'Location'ns.jobResource
+     response.Content←⎕JSON ns
+ :EndIf

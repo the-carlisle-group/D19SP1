@@ -2,9 +2,7 @@
      response←⍺
      dmx←⍵
      dmx.APLVersion←#.APLVersion
-     dmx.Log←⎕NS''
-     dmx.Log.Request←⎕NS''
-     dmx.Log.Request.URI←⍺.logURI
+     dmx.metadata←response.metadata
      response.StatusCode←500
      response.Content←⎕JSON dmx
      response.ContentType←'application/json'

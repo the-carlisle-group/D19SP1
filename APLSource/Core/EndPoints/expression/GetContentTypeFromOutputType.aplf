@@ -1,0 +1,6 @@
+ GetContentTypeFromOutputType←{
+     ⍵≡'JSON':'application/json'
+     ⍵≡'XML':'application/xml'
+     ⍵≡'DCF':'application/octet-stream'
+     'Invalid OutputType requested.'⎕SIGNAL 502
+ }

@@ -1,0 +1,17 @@
+ TestRequest←{
+     c←#.CarlisleGroup.Rumba.Core.NewClient''
+     c.Host←'localhost'
+     c.Port←8081
+
+     rc←#.D19WS.Core.CreateRequest''
+     rc.outputType←'dcf'
+     rc.function←'{Z}←testFoo' '⎕←''Look I am running!''' 'Z←⍳100 ' 'Z+←?0'
+
+     req←#.CarlisleGroup.Rumba.Core.NewRequest''
+     req.Method←'POST'
+     req.Content←⎕JSON rc
+     req.Headers←⊂'ContentType' 'applicatio/json'
+     req.URI←'/expression'
+     res←c #.CarlisleGroup.Rumba.Core.SendAndReceive req
+
+ }

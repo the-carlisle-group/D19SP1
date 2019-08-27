@@ -1,0 +1,9 @@
+ Z←GetHttpDateTime seconds;dt
+
+ :Trap 0
+     ⎕USING←,⊂'System'
+     dt←DateTime.Now.ToUniversalTime.AddSeconds seconds
+     Z←dt.ToString(⊆'yyyyMMddTHHmmssZ')
+ :Else
+     Z←'No supported library here :(.'
+ :EndTrap

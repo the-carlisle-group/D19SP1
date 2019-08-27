@@ -1,0 +1,53 @@
+ Z←response ProcessExpression request;ns;c;b;ob;ok;st;tid;finished;uri;d;useMultiPart
+ Z←response
+ →(1=≢request.Segments)/0               ⍝ missing expression in path
+
+ ns←##.jobs.CreateJobRequest''
+ ns.outputType←1(819⌶)request ##.##.rumba.Core.GetQueryParameter'outputtype'
+ ns.outputType←(0=≢ns.outputType)⊃ns.outputType'JSON'
+ ns.outputType←CheckForValidOutputType ns.outputType
+ ns.expression←1⊃request.Segments
+
+ ob←##.##.(aws.S3.Object.New BucketRef)
+ ob.Folder←'responses'
+ ob.ContentType←GetContentTypeFromOutputType ns.outputType
+ ob.Key←ns.id,GetFileExtFromOutputType ns.outputType
+ ob.MetaData←('x-amz-meta-author'⎕AN)('x-amz-meta-type'ns.outputType)('x-amz-meta-apl-version'(¯1↓∊#.APLVersion,¨' '))
+
+ ⍝ Create job state
+ ##.##.Jobs,←ns
+ ns.status←'new'
+ ns←ns.id ##.##.UpdateJob''
+ response.metadata.expression←ns.expression  ⍝ attach to result object
+ response.metadata.jobResource←ns.jobResource ⍝ set by UpdateJob
+
+ st←##.##.aws.Utils.GetEpochTime
+
+ ns.status←'executing'
+ ok←ns.id ##.##.UpdateJob''
+
+ :Trap 0
+     d←ns ProcessResponse⍎ns.expression
+ :Else
+     ns.message←⎕JSON ⎕DMX.EM
+     ns.status←'error'
+     ns.id UpdateJob'error'
+     ⎕SIGNAL⊂('EN' 400)('EM' 'Expression did produce a result.')('Message'ns.EM) ⍝('Message'('Expression: ',⍺.expression))⊥
+ :EndTrap
+
+ ns.resultSize←≢d
+ ns.status←'uploading'
+ ns←ns.id UpdateJob''
+ response.ContentType←GetContentTypeFromOutputType ns.outputType
+ response.Value←d
+ useMultiPart←0
+ ns.s3PutType←useMultiPart⊃'Put' 'PutMultiPart'
+ ob⍎ns.s3PutType
+
+ ns.resource←ob.GeneratePreSignedGet 360 ⍝ 5 min
+ response.StatusCode←307 ⍝ 307 = tempoarary redirect & 301 permanent redirect
+ response.Headers←⊂'Location'ns.resource
+
+ ns.linkExpires←Utils.GetHttpDateTime 360
+ ns.status←'success'
+ ns←ns.id UpdateJob''

@@ -1,26 +1,37 @@
  Init←{
-     _←⎕WA
-     ##.AcreConfig.ProjectFolder←{
-         'CLEAR WS'≡⎕WSID:⍵
-         path←('\\'⎕R'/')↑⎕NPARTS ⎕WSID
-         ax←path,'Assets/'
-         #.DCL.AcreConfig.ProjectFolder←ax,'DyalogDCL/'
-         #.CarlisleGroup.Rumba.AcreConfig.ProjectFolder←ax,'Rumba/'
-         path
-     }##.AcreConfig.ProjectFolder
-     _←#.DCL.Crypt.Init #.DCL.AcreConfig.ProjectFolder,'Assets/DCL/'
-     _←#.CarlisleGroup.Rumba.Core.InitConga''
-     _←#.CarlisleGroup.AWSTools.Init
-     Settings∘←⎕NS''
-     keys←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'keys.json'
-     Settings.AWS_AccessKey←keys.AccessKey
-     Settings.AWS_SecretKey←keys.SecretKey
-     Settings.AWS_Bucket←'myapp-norbert'  ⍝ must be valid uri structure
-     Settings.AWS_Region←'us-east-1'
-     _←CreateAppBucket Settings
+     ⍺←⍬
+     ⍺::{ns←⎕NS'' ⋄ ns.dmx←⎕DMX ⋄ ns.aplVersion←#.APLVersion ⋄ ⎕←1(⎕JSON⍠'Compact' 0)ns}''
+     ⎕←'⎕WSID: ',⎕WSID
 
+     rumba∘←##.##.CarlisleGroup.Rumba
+     dcl∘←##.##.DCL
+     aws∘←#.CarlisleGroup.AWSTools
+     pf∘←##.AcreConfig.ProjectFolder             ⍝ generic path to project folder
+
+     ⎕←(⎕UCS 13 10),'Starting...',⎕UCS 13 10
+     _←ResetRumbaConga''
+     _←InitProjectFolders''
+     ok←dcl.Crypt.Init dcl.AcreConfig.ProjectFolder,'Assets/DCL/'
+     0≠ok:⎕SIGNAL⊂('EN' 11)('EM' 'DCL library could not be initiazlied.')('Message'('DCL Error: ',ok))
+     _←rumba.Core.InitConga''
+     _←aws.Init
+
+     ⎕←'Conga TimeStamp: ',1⊃rumba.DRC.GetProp'.' 'HttpDate'
+     Settings∘←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'settings.json'
+     Settings.hostName←⎕CMD'hostname'
+
+      ⍝ init jobs store
+     _←⎕EX'Jobs'
+     Jobs∘←⍬
+
+     _←CreateAppBucket Settings
+     _←InitBucketRefs''
      _server∘←StartServer''
-     ⎕←'Server is running!'
+
+     ⎕←''
+     path←'https://localhost:',(⍕Settings.Port),'/expression/',rumba.Core.PercentEncode'({(819⌶)⍵}@(⍸(2|⍸(≢⎕A)/1)))⎕A'
+     ⎕←'Running: ',path
+     ⎕SE.UCMD'open ',path
      'CLEAR WS'≡⎕WSID:_←0
      ⎕DQ'.'
 

@@ -1,0 +1,31 @@
+ GetJobHTML←{
+     rh←##.##.Rumba.HTML
+     job←⍵
+
+     h←rh.Add'html'
+     h.Class←'HTMLDocument'
+     h._Class←'HTMLDocument'
+     h.lang←'en'
+     hd←h rh.Add'head'
+     l←hd rh.Add'link'
+     l.rel←'stylesheet'
+     l.type←'text/css'
+     l.href←'/html/jobviewer/style.css'
+     mt←hd rh.Add'meta'
+     mt.charset←'utf-8'
+
+     h1←h rh.Add'h1'job.id
+     div←h rh.Add'div'
+
+     props←job.⎕NL ¯2
+     vals←⍕¨job⍎¨job.⎕NL ¯2
+
+     _←div∘{
+         p←⍺ rh.Add'p' ⋄
+         _←p rh.Add'label'((0⊃⍵),':')
+         _←p rh.Add'span'(1⊃⍵)
+         p
+     }¨↓⍉⊃props vals
+
+     h
+ }

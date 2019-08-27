@@ -1,0 +1,41 @@
+body{
+    background-color: black;
+    color: white
+}
+
+h1{
+    text-align: center;
+    padding-bottom: 10%    
+}
+
+th{
+    color:whitesmoke;
+}
+
+th,td{
+    padding-right: 12pt;
+    padding-bottom: 10pt;
+}
+
+th{
+    text-align: left;
+    font-size: 16pt 
+}
+
+.cellError {
+    color: red;
+}
+
+.cellSuccess {
+color: green;
+}
+
+.cellProgress{
+    color: orange
+}
+
+a {
+    color: whitesmoke;
+    text-decoration: none;
+    text-transform: none;
+  }
