@@ -6,6 +6,9 @@
          folder
      }⍵
 
+     ⍝ disable ride
+     r←3502⌶0
+
      ⍝ clean up current application runtime and reset necessary properties
      _←ResetRumbaConga''
      _←⎕EX'Settings' '_server' 'rumba' 'dcl' 'aws' 'BucketRef' 'Jobs'
@@ -15,16 +18,37 @@
      _←3 ⎕NDELETE path
 
      _←3 ⎕MKDIR path
-     #.⎕LX←'0 ',##.AcreConfig.StartUp
+     #.⎕LX←'0 ',(⍕⎕THIS),'.Init 0'  ⍝ leading zero indicates global init error trapping at runtime
      wsPath←('\\'⎕R'/')path,'/app.dws'
      _←(2400⌶)1 ⍝ drop all stops!
      _←0 ⎕SAVE wsPath
      _←(path,'\Assets')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'Assets'
-     _←(path,'\settings.json')(⎕NCOPY⍠('IfExists' 'Replace'))##.AcreConfig.ProjectFolder,'settings.json'
-     settings←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'settings.json'
-     port←⍕settings.Port
-     dockerCMD←'docker run -p 4502:4502  -p ',port,':',port,' -v ',path,':/data dyalog/dyalog /data/app.dws' ⍝ -h norbert  / host
-     _←dockerCMD ⎕NPUT(path,'\docker.bat')1
+
+     _settings←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'settings.json'
+     _settings.LogToSession←⊂'false'
+     _←(⎕JSON _settings)⎕NPUT path,'\settings.json'
+
+     s←#.CarlisleGroup.Rumba.AcreConfig.ProjectFolder,'Assets/Runtime'
+     d←path,'/Assets/Runtime/Rumba/Assets'
+     _←3 ⎕MKDIR d
+     _←d(⎕NCOPY⍠('IfExists' 'Replace'))s
+
+     s←#.DCL.AcreConfig.ProjectFolder,'Assets/Runtime'
+     d←path,'/Assets/Runtime/DyalogDCL/Assets'
+     _←3 ⎕MKDIR d
+     _←d(⎕NCOPY⍠('IfExists' 'Replace'))s
+
+     s←#.CarlisleGroup.AWSTools.AcreConfig.ProjectFolder,'Assets/Runtime'
+     d←path,'/Assets/Runtime/AWSTools/Assets'
+     _←3 ⎕MKDIR d
+     _←d{0::0 ⋄ ⍺(⎕NCOPY⍠('IfExists' 'Replace'))⍵}s
+
+     port←⍕_settings.Port
+     portArgs←' -p ',port,':',port
+     port←⍕_settings.RidePort
+     portArgs,←' -p ',port,':',port
+     dockerCMD←'docker run -u root ',portArgs,' -v ',path,':/data dyalog/dyalog /data/app.dws' ⍝ -h norbert  / host
+     _←dockerCMD ⎕NPUT(path,'\start_windows_docker.bat')1
      ⎕←path
      ⎕←dockerCMD
      _←⎕SE.UCMD'open ',path

@@ -1,25 +1,45 @@
  Init←{
+     _←(3502⌶)0
      ⍺←⍬
      ⍺::{ns←⎕NS'' ⋄ ns.dmx←⎕DMX ⋄ ns.aplVersion←#.APLVersion ⋄ ⎕←1(⎕JSON⍠'Compact' 0)ns}''
      ⎕←'⎕WSID: ',⎕WSID
+     ⎕←'User: ',⎕AN
+     ⎕←'⎕WA: ',⍕⎕WA
 
      rumba∘←##.##.CarlisleGroup.Rumba
      dcl∘←##.##.DCL
      aws∘←#.CarlisleGroup.AWSTools
-     pf∘←##.AcreConfig.ProjectFolder             ⍝ generic path to project folder
 
      ⎕←(⎕UCS 13 10),'Starting...',⎕UCS 13 10
      _←ResetRumbaConga''
      _←InitProjectFolders''
-     ok←dcl.Crypt.Init dcl.AcreConfig.ProjectFolder,'Assets/DCL/'
+     pf∘←##.AcreConfig.ProjectFolder             ⍝ generic path to project folder  ⍝ must be done after folder init
+
+     ok←dcl.Crypt.Init dcl.AcreConfig.ProjectFolder,'Assets/Runtime/'
      0≠ok:⎕SIGNAL⊂('EN' 11)('EM' 'DCL library could not be initiazlied.')('Message'('DCL Error: ',ok))
      _←rumba.Core.InitConga''
+⍝     _←Trace 1       ⍝⍝⍝⍝⍝⍝⍝⍝ ENABLE CONGA TRACE!!!  INSECURE!!!
      _←aws.Init
 
      ⎕←'Conga TimeStamp: ',1⊃rumba.DRC.GetProp'.' 'HttpDate'
      Settings∘←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'settings.json'
      Settings.hostName←⎕CMD'hostname'
 
+     useRide←Settings.RideEnabled≡⊂'true'
+     useRide←useRide∧'W'≢↑↑#.APLVersion
+
+     ⍝ RIDE only on non linux right now
+     ⎕←useRide/'RIDE Server enabled on port ',⍕Settings.RidePort
+     ok←useRide{
+         r←3502⌶0
+         r←3502⌶'SERVE::',⍕⍵ ⍝ Update init string
+         3502⌶⍺
+     }Settings.RidePort
+
+     ⎕←'Cert Path: ',pf,Settings.SSLCertPath
+     ⎕←'Cert Key: ',pf,Settings.SSLKeyPath
+
+     ⎕←((⎕AN≢'root')∧('W'≢↑↑#.APLVersion)∧Settings.Port<1025)/'WARNING!!! Unix process will not start the server on port below 1024 without root privileges.'
       ⍝ init jobs store
      _←⎕EX'Jobs'
      Jobs∘←⍬
@@ -29,11 +49,12 @@
      _server∘←StartServer''
 
      ⎕←''
-     path←'https://localhost:',(⍕Settings.Port),'/expression/',rumba.Core.PercentEncode'({(819⌶)⍵}@(⍸(2|⍸(≢⎕A)/1)))⎕A'
+     ⍝     path←'https://localhost:',(⍕Settings.Port),'/expression/',rumba.Core.PercentEncode'({(819⌶)⍵}@(⍸(2|⍸(≢⎕A)/1)))⎕A'
+     path←'https://localhost/html/index.html'
      ⎕←'Running: ',path
-     ⎕SE.UCMD'open ',path
      'CLEAR WS'≡⎕WSID:_←0
      ⎕DQ'.'
+     _←⎕SE.UCMD'open ',path
 
     ⍝ docker startup with hostname
     ⍝ docker run -h thisismyhostname -v c:/temp:/data dyalog/dyalog /data/dockertest.dws

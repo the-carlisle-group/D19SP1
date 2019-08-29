@@ -1,0 +1,22 @@
+ OnRumbaRequestDnfsthatbreaks←{
+     request←⍵
+     method←request.Method
+     request.QueryParameters[;0]←(819⌶)¨request.QueryParameters[;0]         ⍝ query param names are not case sensitive
+     response←#.CarlisleGroup.Rumba.Core.NewResponse request
+     response.metadata←⎕NS''
+     response.StatusCode←404
+     _←LogRequestToS3&request.Header
+⍝     0::response SendError ⎕DMX
+     request.Path≡'/favicon.ico':response GetFavIcon request
+     0=≢request.Segments:response               ⍝ no path -> 404
+     entry←(819⌶)0⊃request.Segments
+     0=EndPoints.⎕NC entry:response             ⍝ invalid endpoint -> 404
+     entryRef←EndPoints⍎entry              ⍝ THIS CAN FAIL
+     vm vc←entryRef.ValidRequestTypes
+     vii←vm⍳⊆method⍝⊂request.Method  ⍝⍝⍝ DOESNT WORK all the time
+     vii=≢vm:response SendInvalidMethod request              ⍝ HTTP method not implemented -> 501
+     response.ContentType←entryRef GetResponseContentType request
+     0=entryRef.⎕NC request.Method:'HTTP handler method not implemented.'⎕SIGNAL 11  ⍝ handler function missing?
+     methodFoo←entryRef⍎request.Method
+     response methodFoo request
+ }

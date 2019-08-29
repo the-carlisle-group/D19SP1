@@ -3,6 +3,10 @@ body{
     color: white
 }
 
+p{
+    padding: 4px;
+}
+
 h1{
     text-align: center;
     padding-bottom: 10%    

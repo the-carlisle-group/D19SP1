@@ -1,0 +1,21 @@
+ {Z}←Trace on;tie;ntie
+
+ ⍝⎕NDELETE'./conga.log'
+ ntie←{                              ⍝ handle on null file.
+     0::⎕SIGNAL ⎕EN                  ⍝ signal error to caller.
+     22::⍵ ⎕NCREATE 0                ⍝ ~exists: create.
+     0 ⎕NRESIZE ⍵ ⎕NTIE 0            ⍝  exists: truncate.
+ }
+
+ tie←ntie'conga.log'
+
+ {}⎕NUNTIE tie
+
+ :If on>0
+     rumba.DRC.SetProp'.' 'Trace' 1042
+     rumba.DRC.SetProp'.' 'TraceGnuTls' 10
+ :Else
+     rumba.DRC.SetProp'.' 'Trace' 0
+     rumba.DRC.SetProp'.' 'TraceGnuTls' 0
+ :EndIf
+ Z←1

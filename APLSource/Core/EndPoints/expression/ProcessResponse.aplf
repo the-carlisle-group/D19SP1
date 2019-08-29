@@ -1,0 +1,15 @@
+ Z←ns ProcessResponse expResult;tf;tn;d
+
+ :Select ns.outputType
+ :Case 'DCF'
+     tf←##.##.Utils.GetTempFile'.dcf'
+     tn←tf ⎕FCREATE 0
+     expResult ⎕FAPPEND tn
+     ⎕FUNTIE tn
+     tn←tf ⎕NTIE 0
+     d←⎕NREAD tn 80 ¯1
+     ⎕NUNTIE tn
+     Z←d
+ :Case 'JSON'
+     Z←⎕JSON expResult
+ :EndSelect

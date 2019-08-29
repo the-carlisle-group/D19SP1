@@ -1,0 +1,5 @@
+ ntie←{                              ⍝ handle on null file.
+     0::⎕SIGNAL ⎕EN                  ⍝ signal error to caller.
+     22::⍵ ⎕NCREATE 0                ⍝ ~exists: create.
+     0 ⎕NRESIZE ⍵ ⎕NTIE 0            ⍝  exists: truncate.
+ }

@@ -1,4 +1,5 @@
  GetStatic←{
+     ⍝ ⍵    = relative path to file on disk
      response←⍺
      path←HtmlDir,1↓⍵
      0=⎕NEXISTS path:response{⍺.StatusCode←404 ⋄ ⍺}''

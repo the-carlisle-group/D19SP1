@@ -1,19 +1,20 @@
  StartServer←{
      ok←{0::0 ⋄ ⎕THIS._server rumba.Core.Close 0}0
-     _←rumba.⎕EX'DRC'
      _←rumba.Core.InitConga''
      s←rumba.Core.NewServer 0
      s.OnRequest←(⍕⎕THIS),'.OnRumbaRequest'
-     s.Trap←1
+     s.Trap←Settings.TrapErrors≡⊂'true'
      s.Port←Settings.Port
      s.LogConga←0
      s.LogHTTP←0
      s.LogRumba←0
      s.DisplayRequests←0
      s.LogHTTPToSession←Settings.LogToSession≡⊂'true'
-     s.Folder←'c:\temp\rumba\'
-     s.Secure←1
-     s.X509←↑rumba.Conga.X509Cert.ReadCertFromFile pf,Settings.SSLCertPath
+     s.Folder←(Utils.GetTempDir''),'/rumba/'
+     s.Secure←Settings.Secure≡⊂'true'
+     x509←⎕NEW rumba.DRC.X509Cert
+     x509.LDRC←rumba.DRC
+     s.X509←0⊃x509.ReadCertFromFile pf,Settings.SSLCertPath
      s.X509.KeyOrigin←'DER'(pf,Settings.SSLKeyPath)
      r←s rumba.Core.Start 0
      s

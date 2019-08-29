@@ -3,5 +3,5 @@
      ns←(Jobs.id⍳⊂id)⊃Jobs
      ns.message←{0::'' ⋄ ⍵.message}⍵
      ns.lastUpdateTime←aws.Utils.GetTimeStamp
-     ns
+     1:_←ns
  }

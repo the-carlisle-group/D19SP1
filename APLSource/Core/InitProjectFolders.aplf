@@ -4,7 +4,7 @@
          'CLEAR WS'≡⎕WSID:⍵
          path←('\\'⎕R'/')↑⎕NPARTS ⎕WSID
          path,←('/'≠¯1↑path)/'/'
-         ax←path,'Assets/'
+         ax←path,'Assets/Runtime/'
          dcl.AcreConfig.ProjectFolder←ax,'DyalogDCL/'
          rumba.AcreConfig.ProjectFolder←ax,'Rumba/'
          path

@@ -1,5 +1,5 @@
  GetJobHTML←{
-     rh←##.##.Rumba.HTML
+     rh←##.##.rumba.HTML
      job←⍵
 
      h←rh.Add'html'

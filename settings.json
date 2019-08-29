@@ -1,10 +1,14 @@
 {
+    "TrapErrors": true,
     "AWS_AccessKey": "AKIA5SCSYLIVIHJPTPMI",
     "AWS_SecretKey": "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",
     "AWS_Bucket": "myapp-norbert",
     "AWS_Region": "us-east-1",
     "Port": 443,
+    "Secure": true,
     "LogToSession": true,
-    "SSLCertPath": "Assets/Runtime/Rumba/Files/TestCertificates/server/localhost-cert.pem",
-    "SSLKeyPath": "Assets/Runtime/Rumba/Files/TestCertificates/server/localhost-key.pem"
+    "RideEnabled": true,
+    "RidePort": 4502,
+    "SSLCertPath": "Assets/Runtime/Certs/Server/localhost-cert.pem",
+    "SSLKeyPath":  "Assets/Runtime/Certs/Server/localhost-key.pem"
 }

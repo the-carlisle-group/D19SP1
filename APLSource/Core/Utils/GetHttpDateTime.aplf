@@ -1,9 +1,9 @@
  Z←GetHttpDateTime seconds;dt
 
- :Trap 0
+ :If 'W'≡↑↑#.APLVersion
      ⎕USING←,⊂'System'
      dt←DateTime.Now.ToUniversalTime.AddSeconds seconds
      Z←dt.ToString(⊆'yyyyMMddTHHmmssZ')
  :Else
-     Z←'No supported library here :(.'
- :EndTrap
+     Z←(⍕⎕TS),' plus ',(⍕seconds),' seconds.</br>No native date-time arithmetic support here'
+ :End

@@ -1,31 +1,101 @@
- OnRumbaRequest←{
-     request←⍵
-     ⎕←request.Path
-     request.QueryParameters[;0]←(819⌶)¨request.QueryParameters[;0]         ⍝ query param names are not case sensitive
-     response←#.CarlisleGroup.Rumba.Core.NewResponse request
-     response.metadata←⎕NS''
-     _←response LogRequestToS3&⍵
-     0::response SendError ⎕DMX
-     response.StatusCode←404
-     request.Path≡'/favicon.ico':response GetFavIcon request
-     0=≢request.Segments:response               ⍝ no path -> 404
-     entry←(819⌶)0⊃request.Segments
-     0=EndPoints.⎕NC entry:response             ⍝ invalid endpoint -> 404
-     entryRef←EndPoints⍎entry
-     validProps←entryRef.ValidRequestTypes
-     vii←validProps[;0]⍳⊆request.Method
-     vii=≢validProps:response SendInvalidMethod request              ⍝ HTTP method not implemented -> 501
-     response.ContentType←entryRef GetResponseContentType request
-     0=entryRef.⎕NC request.Method:'HTTP handler method not implemented.'⎕SIGNAL 11  ⍝ handler function missing?
-     methodFoo←entryRef⍎request.Method
-     response methodFoo request
+ Z←OnRumbaRequest request
+ ;response
+ ;entry
+ ;entryRef
+ ;vm
+ ;vc
+ ;vii
+ ;methodFoo
+ ;⎕TRAP
 
-    ⍝ (request checkMethod'GET')∧'html'≡0⊃request.Segments:response GetStatic request.Path
-    ⍝ (request checkMethod'GET')∧'expression'≡(819⌶)0⊃request.Segments:response ProcessExpression request
-    ⍝ (request checkMethod'GET')∧'jobs'≡(819⌶)0⊃request.Segments:response ProcessGetJobs request
+⍝ Force query param names to lowercase
+⍝ This server is not case sensitive but other applications may
+⍝ require strict adherence to casing.
+ request.QueryParameters[;0]←(819⌶)¨request.QueryParameters[;0]
 
-      ⍝    (request checkMethod'GET')∧'expression'≡(819⌶)0⊃request.Segments:response ProcessExpressionAsync request
- ⍝    (request checkMethod'POST')∧'expression'≡(819⌶)0⊃request.Segments:response ProcessExpressionFunction request
+⍝ Initiate a new Rumba Response object that is based on the Request
+ response←#.CarlisleGroup.Rumba.Core.NewResponse request
 
-     response
- }
+⍝ metadata is used to store non-request specific data during execution.
+ response.metadata←⎕NS''
+
+⍝ Set the default response to http status code 404 -> Not Found
+⍝ We'll rely on this when checking for required resources.
+ response.StatusCode←404
+
+⍝ Set response to Z
+ Z←response
+
+⍝ Set trap to catch any subsequent error and run the SendError routine
+⍝ SendError will return a JSON structure containing
+⍝  ⎕DMX
+⍝  APL Version
+⍝  Copy of metadata.  Extreme care should be taken not to place sensitive
+⍝                     data into the Response.metadata namespace.
+ ⎕TRAP←0 'C' 'response SendError ⎕DMX'
+
+⍝ Web browser request like an icon for the page.  This will return a .ico
+⍝ resource and quit processing.
+ :If request.Path≡'/favicon.ico'
+     Z←response GetFavIcon request
+     :Return
+ :EndIf
+
+⍝ Check if a path was defined.  This server requires a valid
+⍝ endpoint to continue processing.  no path -> 404
+ →(0=≢request.Segments)/0
+
+⍝ Get the initial requested endpoint.  This is always at
+⍝ position 0 of request.Segments.
+⍝ I.e. domain.com/files/file -> /files
+ entry←(819⌶)0⊃request.Segments
+
+⍝ Check if Endpoints namespace contains a namespace
+⍝ with the same name as the requested endpoint.
+⍝ If not, get out.  The default 404 response will be sent.
+ →(0=EndPoints.⎕NC entry)/0
+
+⍝ Get reference to desierved endpoint namespace.
+ entryRef←EndPoints⍎entry
+
+⍝ All endpoint namespaces must have a variable or function
+⍝ called "ValidRequestType" that returns a vector of vectors
+⍝ with allowed HTTP methods and possible output ⍝ content types.
+⍝ I.e.
+⍝      M←'GET' 'PUT' DELETE'
+⍝      C←(⊆'*/*)('application/json' 'text/html')(⊆'application/json')
+ vm vc←entryRef.ValidRequestTypes
+
+⍝ Get index of user request method in result of ValidRequestTypes
+ vii←vm⍳⊆request.Method
+
+⍝ Send invalid method error of index is invalid.
+ :If vii=≢vm
+    ⍝ HTTP method not implemented -> 501
+     Z←response SendInvalidMethod request
+     :Return
+ :EndIf
+
+⍝ Set response content type based on request and available
+⍝ content type results for the endpoint.
+ response.ContentType←entryRef GetResponseContentType request
+
+⍝ Each endpoint must have a function named after each valid
+⍝ http method.   If your endpoint supports GET, PUT and DELETE
+⍝ you must have the function GET, PUT and DELETE in the endpoint
+⍝ namespace.  These must have the request and produce valid
+⍝ results and status codes for the request method.
+
+⍝ Check if request http method event handler exists.
+ :If 0=entryRef.⎕NC request.Method
+    ⍝ handler function missing?
+     'HTTP handler method not implemented.'⎕SIGNAL 11
+ :EndIf
+
+⍝ Get reference to http method function handler in endpoint namespace
+ methodFoo←entryRef⍎request.Method
+
+⍝ Call the handler method and assign Rumba.Response object
+⍝ to result of this function, which the server will construct
+⍝ into a valid http response and send back to the client.
+ Z←response methodFoo request

@@ -1,12 +1,13 @@
  GetResponseContentType←{
      er←⍺
      request←⍵
-     index←er.ValidRequestTypes[;0]⍳⊆request.Method
-     acceptedTypes←index⊃er.ValidRequestTypes[;1]
+     vm vc←er.ValidRequestTypes
+     index←vm⍳⊆request.Method
+     acceptedTypes←index⊃vc
      accept←request rumba.Core.GetHeaderValue'accept'
      accept←(accept≠',')⊆accept
      acceptedTypes≡⊆'*/*':0⊃accept
-     ~∨/accept∊acceptedTypes:{response.StatusCode←415 ⋄ response}''
+     ~∨/accept∊acceptedTypes:'application/json'                                   ⍝{response.StatusCode←415 ⋄ response}''
      accept←((((accept⍳acceptedTypes))<≢accept)⍳1)⊃acceptedTypes
      accept
  }

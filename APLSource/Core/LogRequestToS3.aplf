@@ -1,11 +1,10 @@
  LogRequestToS3←{
-     request←⍵
+     ⍝ ⍵    : HTTP Request, without content
+     0::_←0
      ob←aws.S3.Object.New BucketRef
-     ⍝ob.ACL←'public-read'
      ob.ContentType←'text/plain'
-     ob.Value←request.Header
+     ob.Value←⍵
      ob.Folder←'logs'
      ob.Key←'request-',(' '~⍨∊⍕⎕TS),'.txt'
-     ok←ob.Put
-     ⍺.metadata.requestLogUri←ob.URI
+     1:ok←ob.Put
  }
