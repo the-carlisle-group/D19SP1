@@ -49,7 +49,7 @@
      _server∘←StartServer''
 
      ⎕←''
-     ⍝     path←'https://localhost:',(⍕Settings.Port),'/expression/',rumba.Core.PercentEncode'({(819⌶)⍵}@(⍸(2|⍸(≢⎕A)/1)))⎕A'
+     ⍝     path←'https://localhost:',(⍕Settings.Port),'/expression/',rumba.Core.PercentEncode'({Utils.ToLower }@(⍸(2|⍸(≢⎕A)/1)))⎕A'
      path←'https://localhost/html/index.html'
      ⎕←'Running: ',path
      'CLEAR WS'≡⎕WSID:_←0

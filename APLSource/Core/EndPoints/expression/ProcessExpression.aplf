@@ -1,9 +1,17 @@
- Z←response ProcessExpression request;ns;c;b;ob;ok;st;tid;finished;uri;d;useMultiPart;r
+ Z←response ProcessExpression request
+ ;⎕PATH
+ ;ns
+ ;ob
+ ;ok
+ ;d
+ ;r
+
+ ⎕PATH←'##.##.Utils'
  Z←response
  →(1=≢request.Segments)/0               ⍝ missing expression in path
 
  ns←##.jobs.CreateJobRequest''
- ns.outputType←1(819⌶)request ##.##.rumba.Core.GetQueryParameter'outputtype'
+ ns.outputType←##.##.Utils.ToUpper request ##.##.rumba.Core.GetQueryParameter'outputtype'
  ns.outputType←(0=≢ns.outputType)⊃ns.outputType'JSON'
  ns.outputType←CheckForValidOutputType ns.outputType
  ns.expression←1⊃request.Segments
@@ -20,8 +28,6 @@
  ns←ns.id ##.##.UpdateJob''
  response.metadata.expression←ns.expression  ⍝ attach to result object
  response.metadata.jobResource←ns.jobResource ⍝ set by UpdateJob
-
- st←##.##.aws.Utils.GetEpochTime
 
  ns.status←'executing'
  ok←ns.id ##.##.UpdateJob''

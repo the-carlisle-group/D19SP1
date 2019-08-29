@@ -7,11 +7,14 @@
  ;vii
  ;methodFoo
  ;⎕TRAP
+ ;⎕PATH
+
+ ⎕PATH←'Utils'
 
 ⍝ Force query param names to lowercase
 ⍝ This server is not case sensitive but other applications may
 ⍝ require strict adherence to casing.
- request.QueryParameters[;0]←(819⌶)¨request.QueryParameters[;0]
+ request.QueryParameters[;0]←ToLower¨request.QueryParameters[;0]
 
 ⍝ Initiate a new Rumba Response object that is based on the Request
  response←#.CarlisleGroup.Rumba.Core.NewResponse request
@@ -48,7 +51,7 @@
 ⍝ Get the initial requested endpoint.  This is always at
 ⍝ position 0 of request.Segments.
 ⍝ I.e. domain.com/files/file -> /files
- entry←(819⌶)0⊃request.Segments
+ entry←ToLower 0⊃request.Segments
 
 ⍝ Check if Endpoints namespace contains a namespace
 ⍝ with the same name as the requested endpoint.

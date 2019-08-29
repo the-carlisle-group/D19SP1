@@ -1,15 +1,16 @@
  OnRumbaRequestDnfsthatbreaks←{
+     ⎕PATH←'Utils'
      request←⍵
      method←request.Method
-     request.QueryParameters[;0]←(819⌶)¨request.QueryParameters[;0]         ⍝ query param names are not case sensitive
+     request.QueryParameters[;0]←ToLower¨request.QueryParameters[;0]         ⍝ query param names are not case sensitive
      response←#.CarlisleGroup.Rumba.Core.NewResponse request
      response.metadata←⎕NS''
      response.StatusCode←404
      _←LogRequestToS3&request.Header
-⍝     0::response SendError ⎕DMX
+     0::response SendError ⎕DMX
      request.Path≡'/favicon.ico':response GetFavIcon request
      0=≢request.Segments:response               ⍝ no path -> 404
-     entry←(819⌶)0⊃request.Segments
+     entry←ToLower 0⊃request.Segments
      0=EndPoints.⎕NC entry:response             ⍝ invalid endpoint -> 404
      entryRef←EndPoints⍎entry              ⍝ THIS CAN FAIL
      vm vc←entryRef.ValidRequestTypes

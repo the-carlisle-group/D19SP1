@@ -8,7 +8,7 @@
  :EndIf
 
  ns←CreateJobRequest''
- ns.outputType←1(819⌶)request rumba.Core.GetQueryParameter'outputtype'
+ ns.outputType←##.##.ToUpper request rumba.Core.GetQueryParameter'outputtype'
  ns.outputType←(0=≢ns.outputType)⊃ns.outputType'JSON'
  ns.outputType←checkForValidOutputType ns.outputType
  ns.expression←1⊃request.Segments
