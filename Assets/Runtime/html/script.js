@@ -87,7 +87,7 @@ function getJobs() {
     }
 
     // Open a new connection, using the GET request on the URL endpoint
-    request.open('GET', 'https://localhost/jobs', true);
+    request.open('GET', '/jobs', true);
     request.setRequestHeader('accept', 'application/json');
     request.send();
 }
