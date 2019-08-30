@@ -47,10 +47,15 @@
      portArgs←' -p ',port,':',port
      port←⍕_settings.RidePort
      portArgs,←' -p ',port,':',port
-     dockerCMD←'docker run -u root ',portArgs,' -v ',path,':/data dyalog/dyalog /data/app.dws' ⍝ -h norbert  / host
+     nl←⎕UCS 13 10
+     dockerCMD←'@echo off',nl,'SET execpath=docker run -u root ',portArgs,' -v "%cd%":/data dyalog/dyalog /data/app.dws',nl,'%execpath%'
      _←dockerCMD ⎕NPUT(path,'\start_windows_docker.bat')1
-     ⎕←path
-     ⎕←dockerCMD
+     dockerCMD←'docker run -d -u root -p 443:443 -p 4502:4502 -v $PWD:/data dyalog/dyalog /data/app.dws'
+     _←dockerCMD ⎕NPUT(path,'\start_linux_docker.sh')1
+
+     _←('scp -r  -i "C:\Users\Norbert Jurkiewicz\Downloads\testpair.pem" "%CD%" ec2-user@ec2-18-220-129-121.us-east-2.compute.amazonaws.com:dev/app/')⎕NPUT path,'/uploadec2.bat'
+     _←('ssh  -i "C:\Users\Norbert Jurkiewicz\Downloads\testpair.pem"  ec2-user@ec2-18-220-129-121.us-east-2.compute.amazonaws.com')⎕NPUT path,'/connectec2ssh.bat'
+
      _←⎕SE.UCMD'open ',path
 
  }
