@@ -1,10 +1,12 @@
  Init←{
      _←(3502⌶)0
      ⍺←⍬
-     ⍺::{ns←⎕NS'' ⋄ ns.dmx←⎕DMX ⋄ ns.aplVersion←#.APLVersion ⋄ ⎕←1(⎕JSON⍠'Compact' 0)ns}''
+     ⍺::{ns←⎕NS'' ⋄ ns.dmx←⎕DMX ⋄ ns.aplVersion←Utils.APLVersion ⋄ ⎕←1(⎕JSON⍠'Compact' 0)ns}''
+     v←Utils.APLVersion
      ⎕←'⎕WSID: ',⎕WSID
      ⎕←'User: ',⎕AN
      ⎕←'⎕WA: ',⍕⎕WA
+     ⎕←'APLVersion: ',⍕v
 
      rumba∘←##.##.CarlisleGroup.Rumba
      dcl∘←##.##.DCL
@@ -26,7 +28,7 @@
      Settings.hostName←⎕CMD'hostname'
 
      useRide←Settings.RideEnabled≡⊂'true'
-     useRide←useRide∧'W'≢↑↑#.APLVersion
+     useRide←useRide∧'W'≢↑↑v
 
      ⍝ RIDE only on non linux right now
      ⎕←useRide/'RIDE Server enabled on port ',⍕Settings.RidePort
@@ -39,7 +41,7 @@
      ⎕←'Cert Path: ',pf,Settings.SSLCertPath
      ⎕←'Cert Key: ',pf,Settings.SSLKeyPath
 
-     ⎕←((⎕AN≢'root')∧('W'≢↑↑#.APLVersion)∧Settings.Port<1025)/'WARNING!!! Unix process will not start the server on port below 1024 without root privileges.'
+     ⎕←((⎕AN≢'root')∧('W'≢↑↑v)∧Settings.Port<1025)/'WARNING!!! Unix process will not start the server on port below 1024 without root privileges.'
       ⍝ init jobs store
      _←⎕EX'Jobs'
      Jobs∘←⍬

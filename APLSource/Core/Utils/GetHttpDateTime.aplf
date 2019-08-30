@@ -1,6 +1,6 @@
  Z←GetHttpDateTime seconds;dt
 
- :If 'W'≡↑↑#.APLVersion
+ :If 'W'≡↑↑APLVersion
      ⎕USING←,⊂'System'
      dt←DateTime.Now.ToUniversalTime.AddSeconds seconds
      Z←dt.ToString(⊆'yyyyMMddTHHmmssZ')

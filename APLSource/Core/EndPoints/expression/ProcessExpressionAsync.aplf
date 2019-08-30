@@ -17,7 +17,7 @@
  ob.Folder←'responses'
  ob.ContentType←GetContentTypeFromOutputType ns.outputType
  ob.Key←ns.id,GetFileExtFromOutputType ns.outputType
- ob.MetaData←('x-amz-meta-author'⎕AN)('x-amz-meta-type'ns.outputType)('x-amz-meta-apl-version'(¯1↓∊#.APLVersion,¨' '))
+ ob.MetaData←('x-amz-meta-author'⎕AN)('x-amz-meta-type'ns.outputType)('x-amz-meta-apl-version'(¯1↓∊##.##.Utils.APLVersion,¨' '))
 
  ⍝ Create job state
  Jobs,←ns

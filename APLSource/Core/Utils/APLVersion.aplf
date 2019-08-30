@@ -1,0 +1,2 @@
+ Z←APLVersion
+ Z←'#'⎕WG'APLVersion'

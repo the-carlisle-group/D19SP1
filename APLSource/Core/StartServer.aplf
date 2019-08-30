@@ -13,7 +13,6 @@
      s.Folder←(Utils.GetTempDir''),'/rumba/'
      s.Secure←Settings.Secure≡⊂'true'
      x509←⎕NEW rumba.DRC.X509Cert
-     x509.LDRC←rumba.DRC
      s.X509←0⊃x509.ReadCertFromFile pf,Settings.SSLCertPath
      s.X509.KeyOrigin←'DER'(pf,Settings.SSLKeyPath)
      r←s rumba.Core.Start 0

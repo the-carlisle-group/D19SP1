@@ -2,5 +2,7 @@
      response←⍺
      response.IsFile←1
      response.FilePath←pf,'Assets/Runtime/favicon.ico'
+     response.ContentType←rumba.Core.FilenameToContentType response.FilePath
+     response.StatusCode←200
      response
  }

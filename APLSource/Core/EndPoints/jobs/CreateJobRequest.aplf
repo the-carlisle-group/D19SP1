@@ -1,7 +1,7 @@
  CreateJobRequest←{
      ns←⎕NS''
      ns.id←'ID',##.##.aws.Utils.GetTimeStamp,⍕⌊100000000×?0
-     ns.aplVersion←#.APLVersion
+     ns.aplVersion←##.##.Utils.APLVersion
      ns.outputType←''
      ns.expression←''
      ns.status←'new'

@@ -1,7 +1,7 @@
  SendError←{
      response←⍺
      dmx←⍵
-     dmx.APLVersion←#.APLVersion
+     dmx.APLVersion←Utils.APLVersion
      dmx.metadata←response.metadata
      response.StatusCode←500
      response.Content←⎕JSON dmx
