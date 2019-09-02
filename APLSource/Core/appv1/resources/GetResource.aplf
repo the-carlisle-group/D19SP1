@@ -1,0 +1,13 @@
+ GetResource←{
+     _←⍺ ##.##.AuthorizeUser ⍵
+     response←⍺
+     request←⍵
+     name←2⊃request.Segments
+     path←##.##.Settings.localResourceStore,name
+     0=⎕NEXISTS path:⍺
+     value←⎕JSON 0⊃⎕NGET path
+     response.ContentType←value.ContentType
+     response.Content←value.Value
+     response.StatusCode←200
+     response
+ }

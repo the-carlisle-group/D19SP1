@@ -1,0 +1,16 @@
+ AuthorizeUnEnPw←{
+     authHeader←request rumba.Core.GetHeaderValue'Authorization'
+     0=≢authHeader:SignalUnauthorized'Login required'
+     'Basic '≢6↑authHeader:SendUnauthorized'Basic authorization required'
+     authHeader←⎕UCS Utils.base64 6↓authHeader
+     (≢authHeader)<10:SignalUnauthorized'Login data not valid'
+     accessKey secretKey←{(':'≠⍵)⊂⍵}authHeader
+     0=_accessTable.⎕NC accessKey:SignalUnauthorized''
+     request.user←⎕NS _accessTable⍎accessKey  ⍝ clone for this request
+     sk←request.user.secretKey
+     request.user.secretKey≢secretKey:SignalUnauthorized''
+     _←request.user.⎕EX'secretKey'
+     _←⎕EX'authHeader'
+     _←(127⌶)⍬ ⍝ all unused pockets are overwritten,            ⍝ 'my secure data' is no longer present
+     1:_←0
+ }

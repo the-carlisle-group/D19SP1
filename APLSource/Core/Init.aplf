@@ -1,32 +1,80 @@
  Init←{
+     ⍝ Disable any ride connection
      _←(3502⌶)0
+
+     ⍝ Optional left arg defines error trapping.  Default is none.
      ⍺←⍬
+
+     ⍝ Print ⎕DMX ot session on any startup error
      ⍺::{ns←⎕NS'' ⋄ ns.dmx←⎕DMX ⋄ ns.aplVersion←Utils.APLVersion ⋄ ⎕←1(⎕JSON⍠'Compact' 0)ns}''
      v←Utils.APLVersion
+
+     ⍝ Print session info
      ⎕←'⎕WSID: ',⎕WSID
      ⎕←'User: ',⎕AN
      ⎕←'⎕WA: ',⍕⎕WA
      ⎕←'APLVersion: ',⍕v
 
+     ⍝ Setup namespace refs to dependency projects
      rumba∘←##.##.CarlisleGroup.Rumba
      dcl∘←##.##.DCL
      aws∘←#.CarlisleGroup.AWSTools
 
      ⎕←(⎕UCS 13 10),'Starting...',⎕UCS 13 10
+
+     ⍝ Reset any existing Rumba/Conga connection.
      _←ResetRumbaConga''
+
+     ⍝ Initilize project and dependency project
+     ⍝ ./AcreConfig/ProjectFolder paths.
+     ⍝ Required for each project to have access to assets.
      _←InitProjectFolders''
      pf∘←##.AcreConfig.ProjectFolder             ⍝ generic path to project folder  ⍝ must be done after folder init
 
+     ⍝ Init Dyalog Crypto Library.
      ok←dcl.Crypt.Init dcl.AcreConfig.ProjectFolder,'Assets/Runtime/'
-     0≠ok:⎕SIGNAL⊂('EN' 11)('EM' 'DCL library could not be initiazlied.')('Message'('DCL Error: ',ok))
+     0≠ok:⎕SIGNAL⊂('EN' 11)('EM' 'DCL library could not be initiazlied.')('Message'('DCL Error: ',⍕ok))
+
+     ⍝ Initialize conga dll and class
      _←rumba.Core.InitConga''
-⍝     _←Trace 1       ⍝⍝⍝⍝⍝⍝⍝⍝ ENABLE CONGA TRACE!!!  INSECURE!!!
+     ⍝ _←Trace 1       ⍝⍝⍝⍝⍝⍝⍝⍝ ENABLE CONGA TRACE!!!  INSECURE!!!
+
+     ⍝ Initialize AWSTools library
      _←aws.Init
 
+     ⍝ Verify conga is accessible by print Conga DLL UTC time
      ⎕←'Conga TimeStamp: ',1⊃rumba.DRC.GetProp'.' 'HttpDate'
-     Settings∘←⎕JSON 0⊃⎕NGET ##.AcreConfig.ProjectFolder,'settings.json'
+
+     ⍝ Settings.json file path.
+     settingsPath←##.AcreConfig.ProjectFolder,'settings.json'
+
+     ⍝ Is settings.josn file available
+     ~⎕NEXISTS settingsPath:⎕SIGNAL⊂('EN' 22)('EM' 'File settings.json is missing')('Message' 'Did you create a settings file from the settings-template.json file?')
+
+     ⍝ Read in settings file.
+     Settings∘←⎕JSON 0⊃⎕NGET settingsPath
+
+     ⍝ Check to make sure atleast one app is defined.
+     0=≢Settings.Apps:⎕SIGNAL⊂('EN' 11)('EM' 'Settings "Apps" key has no objects defined.')
+
+     ⍝ Set Settings.hostname.  Will be used when more than one
+     ⍝ server is hosting requests.
      Settings.hostName←⎕CMD'hostname'
 
+     ⍝ useAWS←1  = default
+     ⍝ if no (0), save all responses locally and send local link
+     ⍝ flag for offline dev. NOT for production
+     Settings.useAWS←0
+     Settings.localResourceStore←(Utils.GetTempDir''),'/apiApp/'
+ ⍝    _←2 ⎕NDELETE Settings.localResourceStore  ⍝ delete if not empty
+     _←3 ⎕MKDIR Settings.localResourceStore
+
+     ⍝ Init user access rights table
+     ⍝ Runs in a thread and refhresh the _accessTable at interval
+     ⍝ set by settings.json -> Settings.AuthTableRefresh in seconds
+     _←Auth.InitAccessTableRefresh&''
+
+     ⍝ Should dyalog listen for ride connections?
      useRide←Settings.RideEnabled≡⊂'true'
      useRide←useRide∧'W'≢↑↑v
 
@@ -38,21 +86,40 @@
          3502⌶⍺
      }Settings.RidePort
 
+     ⍝ Verify all endpoints have correct min required
+     ⍝ variables and functions
+     _←ValidateAppEndPointStructure¨Settings.Apps
+
+     ⍝ Execute initapp function for each app in settings
+     _←(⍎¨Settings.Apps.ref).InitApp
+
+     ⍝ What certificate paths will be used to
+     ⍝ init the conga server?  Print the paths.
      ⎕←'Cert Path: ',pf,Settings.SSLCertPath
      ⎕←'Cert Key: ',pf,Settings.SSLKeyPath
 
+     ⍝ User must be root (admin) to bind port below 1025
+     ⍝ on linux.
+     ⍝ Check if Linnux, if NOT the  root user a and port below 1025
+     ⍝ Throw an error if info that the proces's wont start.
      ⎕←((⎕AN≢'root')∧('W'≢↑↑v)∧Settings.Port<1025)/'WARNING!!! Unix process will not start the server on port below 1024 without root privileges.'
-      ⍝ init jobs store
-     _←⎕EX'Jobs'
-     Jobs∘←⍬
 
+
+     ⍝ Init the Settings.AWS_Bucket S3 bucket on Amazon.
+     ⍝ Do not if it aleady exists.
      _←CreateAppBucket Settings
      _←InitBucketRefs''
+
+     ⍝ Start the secure REST API Rumba server.
+     ⍝ Create a global ref to the server.
      _server∘←StartServer''
 
+     ⍝ ↓↓↓↓↓↓
+     ⍝ Create resources to make distribution easier.
+     ⍝ TBD
      ⎕←''
      ⍝     path←'https://localhost:',(⍕Settings.Port),'/expression/',rumba.Core.PercentEncode'({Utils.ToLower }@(⍸(2|⍸(≢⎕A)/1)))⎕A'
-     path←'https://localhost/html/index.html'
+     path←'https://localhost/',((0⊃Settings.Apps).name),'/html/index.html'
      ⎕←'Running: ',path
      'CLEAR WS'≡⎕WSID:_←0
      ⎕DQ'.'

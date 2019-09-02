@@ -1,0 +1,4 @@
+ GET←{
+     2=≢⍵.Segments:⍺ ListJobs ⍵
+     ⍺ GetJob ⍵
+ }

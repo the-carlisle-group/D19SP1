@@ -1,0 +1,18 @@
+ GetAccessTable;newUserTable
+
+ ⎕TGET AccessTableSyncTokenID
+ ##._accessTableUpdating←1
+
+ :If ##.Settings.useAWS
+
+     stop
+     newUserTable←''
+ :Else
+     newUserTable←⎕JSON 0⊃⎕NGET ##.##.AcreConfig.ProjectFolder,'accessTable.json'
+ :EndIf
+
+ ##.⎕EX'_accessTable'
+ ##._accessTable←newUserTable
+
+ ##._accessTableUpdating←0
+ ⎕TPUT AccessTableSyncTokenID

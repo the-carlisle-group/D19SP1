@@ -1,0 +1,8 @@
+ GenerateSeqKeyAccessFile←{
+
+     j←1 BuildDemoAuthTable 10
+     j←(⎕JSON⍠'Compact' 0)j
+     fn←##.##.AcreConfig.ProjectFolder,'accessTable.json'
+     ok←j ⎕NPUT fn 1
+     1:_←0
+ }

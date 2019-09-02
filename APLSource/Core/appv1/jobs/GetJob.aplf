@@ -1,0 +1,10 @@
+ GetJob←{
+     _←⍺ ##.##.AuthorizeUser ⍵
+     jobid←2⊃⍵.Segments
+     jobindex←Jobs.id⍳⊆jobid
+     jobindex=≢Jobs:⍺
+     jobns←jobindex⊃Jobs
+     ⍺.StatusCode←200
+     ⍺.Content←⎕JSON jobns
+     ⍺
+ }

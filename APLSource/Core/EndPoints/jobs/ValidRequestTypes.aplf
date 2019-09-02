@@ -1,4 +1,0 @@
- Z←ValidRequestTypes;m;c
- m←,⊆'GET'
- c←,⊂(,⊆'application/json')
- Z←m c

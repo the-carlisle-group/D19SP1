@@ -56,7 +56,7 @@ function getJobs() {
                         }
                     }
                     else if (obProps[j] == "id") {
-                        cellValue = '<a href="/jobs/' + cellValue + '">' + cellValue + '</a>';
+                        cellValue = '<a href="/demoapp/jobs/' + cellValue + '">' + cellValue + '</a>';
                     }
                     else if (obProps[j] == "status") {
                         // var cellValue = '<a href="' + cellValue +'">Get Result</a>';
@@ -87,7 +87,7 @@ function getJobs() {
     }
 
     // Open a new connection, using the GET request on the URL endpoint
-    request.open('GET', '/jobs', true);
+    request.open('GET', '/demoapp/jobs', true);
     request.setRequestHeader('accept', 'application/json');
     request.send();
 }
@@ -109,7 +109,7 @@ function submitExpressionGet() {
     if (expression.length == 0) {
         return;
     }
-    var path = '/expression/' + (encodeURI(expression)) + '?outputType=' + outputType;
+    var path = '/demoapp/expression/' + (encodeURI(expression)) + '?outputType=' + outputType;
 
 
     var request = new XMLHttpRequest()

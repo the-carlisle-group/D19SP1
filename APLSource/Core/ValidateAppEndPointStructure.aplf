@@ -1,0 +1,33 @@
+ ValidateAppEndPointStructure←{
+     app←⍵
+     sigErr←{⎕SIGNAL⊂('EN' 11)('EM'(0⊃⍵))('Message'(1⊃⍵))}
+     ref←⍎app.ref
+     0=ref.⎕NC'InitApp':sigErr(app.name,' is missing InitApp')''
+     0=≢ref.⎕NL ¯9:sigErr'No Apps defined in settings' ''
+     eps←ref⍎¨ref.⎕NL ¯9
+     reqItems←'Operations' 'ValidRequestTypes'
+     ok←(⊂reqItems){
+         ⍵{
+             (⊆⍵)∊⍺.⎕NL ¯2 ¯3:0
+             msg←'App "',app.name,'" endpoint "',(⍕⍺)
+             msg,←'" is a missing the "',⍵,'" function or variable.'
+             sigErr'Invalid endpoint namespace structure.'msg
+         }¨reqItems
+     }¨eps
+
+     ⍝ chekc if all operations have auth function set
+     _←eps{
+         paths←(⊂(⍕⍺),'.'),¨⍵
+         ⍺{
+             found←('AuthorizeUser .+'⎕S 1)⎕NR ⍵
+             0≠≢found:0
+             getName←{↑¯1↑('.'≠⍵)⊂⍵}
+             msg←'App "',app.name,'" endpoint "',(getName⍕⍺),'" operation "',(getName ⍵),'" '
+             msg,←'is a missing the "AuthorizeUser" function call.'
+             sigErr'Endpoint operation missing "AuthorizeUser" check'msg
+         }¨paths
+     }¨eps.Operations
+
+
+     1:_←0
+ }

@@ -1,0 +1,6 @@
+ ListJobs←{
+     _←⍺ ##.##.AuthorizeUser ⍵
+     ⍺.StatusCode←200
+     ⍺.Content←⎕JSON⌽Jobs
+     ⍺
+ }

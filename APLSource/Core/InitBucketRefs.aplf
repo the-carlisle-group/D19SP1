@@ -1,4 +1,5 @@
  InitBucketRefs←{
+     ~Settings.useAWS:_←0
      _←'BucketRef'⎕THIS.⎕NS''
 
      aws←#.CarlisleGroup.AWSTools

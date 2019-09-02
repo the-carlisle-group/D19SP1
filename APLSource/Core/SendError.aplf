@@ -3,9 +3,12 @@
      dmx←⍵
      dmx.APLVersion←Utils.APLVersion
      dmx.metadata←response.metadata
-     response.StatusCode←500
+     response.StatusCode←(dmx.EN=720)⊃500 dmx.ENX
+     response.ReasonPhrase←(dmx.EN=720)⊃response.ReasonPhrase dmx.EM
      response.Content←⎕JSON dmx
      response.ContentType←'application/json'
+     response.Headers,←(dmx.(EN ENX)≡720 401)/⊂('WWW-Authenticate' 'Basic realm="API"')
      _←⎕WA
+     _←(127⌶)⍬ ⍝ all unused pockets are overwritten,            ⍝ 'my secure data' is no longer present
      response
  }

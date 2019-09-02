@@ -1,6 +1,5 @@
- Z←ValidRequestTypes;m;c
+ Z←ValidRequestTypes
  ⍝ Column1      Column2
  ⍝ Method List  Accepted content type for method
- m←,⊂'GET'
- c←,⊂(,⊂'*/*')
- Z←m c
+ Z←0 2⍴''
+ Z⍪←'GET'(,⊂'*/*')

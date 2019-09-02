@@ -5,8 +5,10 @@
  ;ok
  ;d
  ;r
-
+ ;tp
+ ;useMultiPart
  ⎕PATH←'##.##.Utils'
+ response ##.##.AuthorizeUser request
  Z←response
  →(1=≢request.Segments)/0               ⍝ missing expression in path
 
@@ -14,30 +16,30 @@
  ns.outputType←##.##.Utils.ToUpper request ##.##.rumba.Core.GetQueryParameter'outputtype'
  ns.outputType←(0=≢ns.outputType)⊃ns.outputType'JSON'
  ns.outputType←CheckForValidOutputType ns.outputType
- ns.expression←1⊃request.Segments
+ ns.expression←2⊃request.Segments
 
- ob←##.##.(aws.S3.Object.New BucketRef)
- ob.Folder←'responses'
- ob.ContentType←GetContentTypeFromOutputType ns.outputType
- ob.Key←ns.id,GetFileExtFromOutputType ns.outputType
- ob.MetaData←('x-amz-meta-author'⎕AN)('x-amz-meta-type'ns.outputType)('x-amz-meta-apl-version'(¯1↓∊(∊(##.##.Utils.APLVersion,¨' '))))
-
+ :If ##.##.Settings.useAWS
+     ob←##.##.(aws.S3.Object.New BucketRef)
+     ob.Folder←'responses'
+ :Else
+     ob←⎕NS''
+ :EndIf
  ⍝ Create job state
- ##.##.Jobs,←ns
+ ##.jobs.Jobs,←ns
  ns.status←'new'
- ns←ns.id ##.##.UpdateJob''
+ ns←ns.id ##.jobs.UpdateJob''
  response.metadata.expression←ns.expression  ⍝ attach to result object
  response.metadata.jobResource←ns.jobResource ⍝ set by UpdateJob
 
  ns.status←'executing'
- ok←ns.id ##.##.UpdateJob''
+ ok←ns.id ##.jobs.UpdateJob''
 
  :Trap 0
      r←⍎ns.expression
  :Else
      ns.message←⎕JSON⊆⎕DMX.EM
      ns.status←'error'
-     ns.id ##.##.UpdateJob'error'
+     ns.id ##.jobs.UpdateJob'error'
      ns.EM←⎕DMX.EM
      ⎕SIGNAL⊂('EN' 400)('EM' 'Invalid Expression')('Message'ns.EM) ⍝('Message'('Expression: ',⍺.expression))⊥
  :EndTrap
@@ -47,24 +49,31 @@
  :Else
      ns.message←⎕JSON⊆⎕DMX.EM
      ns.status←'error'
-     ns.id ##.##.UpdateJob'error'
+     ns.id ##.jobs.UpdateJob'error'
      ns.EM←⎕DMX.EM
      ⎕SIGNAL⊂('EN' 400)('EM' 'Expression did produce a result.')('Message'ns.EM) ⍝('Message'('Expression: ',⍺.expression))⊥
  :EndTrap
 
  ns.resultSize←≢d
  ns.status←'uploading'
- ns←ns.id ##.##.UpdateJob''
+ ns←ns.id ##.jobs.UpdateJob''
  ob.ContentType←GetContentTypeFromOutputType ns.outputType
  ob.Value←d
- useMultiPart←0
- ns.s3PutType←useMultiPart⊃'Put' 'PutMultiPart'
- ob⍎ns.s3PutType
 
- ns.resource←ob.GeneratePreSignedGet 360 ⍝ 5 min
+ :If ##.##.Settings.useAWS
+     useMultiPart←0
+     ns.s3PutType←useMultiPart⊃'Put' 'PutMultiPart'
+     ob⍎ns.s3PutType
+     ns.resource←ob.GeneratePreSignedGet 360 ⍝ 5 min
+ :Else
+     tp←1⊃⎕NPARTS ##.##.Utils.GetTempFile''
+     (⎕JSON ob)⎕NPUT(##.##.Settings.localResourceStore,tp)1
+     ns.resource←'/demoapp/resources/',tp
+ :EndIf
+
  response.StatusCode←307 ⍝ 307 = tempoarary redirect & 301 permanent redirect
  response.Headers←⊂'Location'ns.resource
 
  ns.linkExpires←##.##.Utils.GetHttpDateTime 360
  ns.status←'success'
- ns←ns.id ##.##.UpdateJob''
+ ns←ns.id ##.jobs.UpdateJob''

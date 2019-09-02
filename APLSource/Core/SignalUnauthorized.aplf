@@ -1,0 +1,2 @@
+ SignalUnauthorized msg
+ ⎕SIGNAL⊂('EN' 720)('ENX' 401)('EM' 'Not Authorized')('Message'msg)

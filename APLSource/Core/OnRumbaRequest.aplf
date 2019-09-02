@@ -6,6 +6,11 @@
  ;vc
  ;vii
  ;methodFoo
+ ;appRef
+ ;appName
+ ;appIndex
+ ;segmentCount
+ ;authHeader
  ;⎕TRAP
  ;⎕PATH
 
@@ -19,23 +24,11 @@
 ⍝ Initiate a new Rumba Response object that is based on the Request
  response←#.CarlisleGroup.Rumba.Core.NewResponse request
 
-⍝ metadata is used to store non-request specific data during execution.
- response.metadata←⎕NS''
-
-⍝ Set the default response to http status code 404 -> Not Found
-⍝ We'll rely on this when checking for required resources.
- response.StatusCode←404
-
 ⍝ Set response to Z
  Z←response
 
-⍝ Set trap to catch any subsequent error and run the SendError routine
-⍝ SendError will return a JSON structure containing
-⍝  ⎕DMX
-⍝  APL Version
-⍝  Copy of metadata.  Extreme care should be taken not to place sensitive
-⍝                     data into the Response.metadata namespace.
- ⎕TRAP←0 'C' 'response SendError ⎕DMX'
+⍝ metadata is used to store non-request specific data during execution.
+ response.metadata←⎕NS''
 
 ⍝ Web browser request like an icon for the page.  This will return a .ico
 ⍝ resource and quit processing.
@@ -44,30 +37,60 @@
      :Return
  :EndIf
 
+⍝ Set the default response to http status code 404 -> Not Found
+⍝ We'll rely on this when checking for required resources.
+ response.StatusCode←404
+
+⍝ Set trap to catch any subsequent error and run the SendError routine
+⍝ SendError will return a JSON structure containing
+⍝  ⎕DMX
+⍝  APL Version
+⍝  Copy of metadata.  Extreme care should be taken not to place sensitive
+⍝                     data into the Response.metadata namespace.
+⍝ Error ⎕EN = 720 will expect ⎕ENX to be a valid https status code
+⍝ which will be set as response.StatusCode←⎕DMX.ENX
+ ⎕TRAP←0 'C' 'Z←response SendError ⎕DMX ⋄ →0'
+
+⍝ Check if request contains auth header
+⍝ if valid, request object will have all user access rights
+⍝ in set as variables.
+⍝ !!! CAUTION !!! NOT TO EXPOSE THESE LATER ON!!!!
+ response AuthorizeUnEnPw request
+
+⍝ get path segment count.  items between slashes after the domain
+ segmentCount←≢request.Segments
+
 ⍝ Check if a path was defined.  This server requires a valid
-⍝ endpoint to continue processing.  no path -> 404
- →(0=≢request.Segments)/0
+⍝ app and endpoint to continue processing.  no path -> 404
+ →(0=≢segmentCount)/0
+
+⍝ Get intial app entry.  Must match one defined in serttings
+ appName←0⊃request.Segments
+ appIndex←Settings.Apps.name⍳⊂appName
+ →(appIndex=≢Settings.Apps)/0
+ appRef←⍎Settings.Apps[appIndex].ref
+
+⍝ check if endpont was included in uri
+⍝ exmaple.. /demoapp/html/ = min two segments
+ →(segmentCount<2)/0
 
 ⍝ Get the initial requested endpoint.  This is always at
 ⍝ position 0 of request.Segments.
 ⍝ I.e. domain.com/files/file -> /files
- entry←ToLower 0⊃request.Segments
+ entry←ToLower 1⊃request.Segments
 
 ⍝ Check if Endpoints namespace contains a namespace
 ⍝ with the same name as the requested endpoint.
 ⍝ If not, get out.  The default 404 response will be sent.
- →(0=EndPoints.⎕NC entry)/0
+ →(0=appRef.⎕NC entry)/0
 
 ⍝ Get reference to desierved endpoint namespace.
- entryRef←EndPoints⍎entry
+ entryRef←appRef⍎entry
 
 ⍝ All endpoint namespaces must have a variable or function
 ⍝ called "ValidRequestType" that returns a vector of vectors
 ⍝ with allowed HTTP methods and possible output ⍝ content types.
-⍝ I.e.
-⍝      M←'GET' 'PUT' DELETE'
-⍝      C←(⊆'*/*)('application/json' 'text/html')(⊆'application/json')
- vm vc←entryRef.ValidRequestTypes
+ vm vc←⊂[0]entryRef.ValidRequestTypes
 
 ⍝ Get index of user request method in result of ValidRequestTypes
  vii←vm⍳⊆request.Method

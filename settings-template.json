@@ -10,5 +10,9 @@
     "RideEnabled": true,
     "RidePort": 4502,
     "SSLCertPath": "Assets/Runtime/Certs/Server/localhost-cert.pem",
-    "SSLKeyPath":  "Assets/Runtime/Certs/Server/localhost-key.pem"
+    "SSLKeyPath":  "Assets/Runtime/Certs/Server/localhost-key.pem",
+    "Apps":[{"name":"demoapp", "ref":"#.D19SP1.Core.appv1"}],
+    "AuthTableType":"S3",
+    "AuthTableObjectURI":"myapp-norbert.s3.awsappi.com/authtable.json",
+    "AuthTableRefresh": 360
 }

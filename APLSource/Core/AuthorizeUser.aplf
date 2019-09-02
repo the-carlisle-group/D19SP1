@@ -1,0 +1,42 @@
+ {Z}←response AuthorizeUser reqrequest
+ ;whileCT
+ ;operation
+ ;opNS
+ ;sii
+ ;appName
+ ;appRef
+ ;endPoint
+ ;apps
+ ;validOps
+ ;isValid
+ ⍝ Authorize user for app, endpoint and operation
+ Z←0
+
+ ⍝ check if user table is updating and wait to complete or timeout
+ ⍝ timeout is 5 seconds
+ whileCT←0
+ :While _accessTableUpdating
+     whileCT+←1
+     :If whileCT=100  ⍝ 5 seconds
+         SignalUnauthorized'Cannot check authorziation at this time.  Please try again later.'
+     :EndIf
+     ⎕DL 0.05
+ :Until ~_accessTableUpdating
+ ⍝ user table update wait
+
+ operation←1⊃⎕SI
+ opNS←0⊃⎕RSI
+ sii←(⍎¨Settings.Apps.ref)⍳(0⊃⎕RSI).##                   ⍝ app index in settings
+ appName appRef←(sii⊃Settings.Apps).(name ref)
+ endPoint←(≢appRef)↓0⊃⎕NSI
+ apps←request.user.apps
+
+ :If 0=apps.⎕NC appName,endPoint
+     SignalUnauthorized'No rights for endpoint'
+ :EndIf
+
+ validOps←apps⍎appName,endPoint
+ isValid←(⊆operation)∊validOps
+ →isValid/0
+
+ SignalUnauthorized'No rights for operation: ',operation

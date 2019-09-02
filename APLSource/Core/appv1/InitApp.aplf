@@ -1,0 +1,7 @@
+ Z←InitApp
+ Z←0
+ ⍝ Init. array to cache jobs.
+ ⍝ These are any requets that require action to
+ ⍝ which creates or manipulaets resources.
+ jobs.⎕EX'Jobs'
+ jobs.Jobs←⍬

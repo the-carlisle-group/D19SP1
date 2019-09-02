@@ -1,5 +1,6 @@
  LogRequestToS3←{
      ⍝ ⍵    : HTTP Request, without content
+     ~Settings.useAWS:_←0
      0::_←0
      ob←aws.S3.Object.New BucketRef
      ob.ContentType←'text/plain'

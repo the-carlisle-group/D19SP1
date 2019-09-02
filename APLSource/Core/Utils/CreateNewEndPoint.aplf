@@ -1,0 +1,55 @@
+ CreateNewEndPoint←{
+ ⍝ ⍺    = ref to app namespace
+ ⍝ ⍵    = name of new endpoint
+     app←⍺
+     name←⍵
+     0≠app.⎕NC ⍵:(name,' already exists in app namespace.')⎕SIGNAL 11
+
+     ⍝ create endpoint under app
+     epref←⍎name app.⎕NS''
+
+     ⍝ add Operations function
+     op←⊂'Z←Operations'
+     op,←⊂'⍝ Array of valid operations'
+     op,←⊂' Z←''GetHelloWorld'' ''GetTimeStamp'''
+     foo←epref.⎕FX op
+
+     ⍝ add validdatatypes
+     op←⊂'Z←ValidRequestTypes'
+     op,←⊂'Z←0 2⍴'''''
+     op,←⊂'Z⍪←''GET''(,⊂''*/*'')'
+     foo←epref.⎕FX op
+
+     ⍝ create sample GET function
+     op←⊂'GET←{'
+     op,←⊂'ops←''GetHelloWorld'' ''GetTimeStamp'''
+     op,←⊂'⍺(⍎(?2)⊃ops)⍵'
+     op,←⊂'}'
+     foo←epref.⎕FX op
+
+     ⍝ create operation helloworld
+     op←⊂'GetHelloWorld←{'
+     op,←⊂'_←⍺ ##.##.AuthorizeUser ⍵'
+     op,←⊂'response←⍺'
+     op,←⊂'request←⍵'
+     op,←⊂'response.StatusCode←200'
+     op,←⊂'response.Content←''Hello World!'''
+     op,←⊂'response'
+     op,←⊂'}'
+     foo←epref.⎕FX op
+
+     ⍝ create operation timestamp
+     op←⊂'GetTimeStamp←{'
+     op,←⊂'_←⍺ ##.##.AuthorizeUser ⍵'
+     op,←⊂'response←⍺'
+     op,←⊂'request←⍵'
+     op,←⊂'response.StatusCode←200'
+     op,←⊂'response.Content←epref.##.##.aws.Utils.GetTimeStamp'
+     op,←⊂'response'
+     op,←⊂'}'
+     foo←epref.⎕FX op
+
+     ⍝ notify acre if exists
+     ⍝ _←{⎕se.acre.SetChanged ⍵,'.*' }⍕⎕this
+     epref
+ }

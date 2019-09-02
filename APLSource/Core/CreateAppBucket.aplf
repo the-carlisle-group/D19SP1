@@ -1,4 +1,5 @@
  CreateAppBucket←{
+     ~Settings.useAWS:''
      c←GetS3Client ⍵
      b←aws.S3.Bucket.New c Settings.AWS_Bucket
      e←b.Exists

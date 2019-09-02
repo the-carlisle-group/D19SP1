@@ -1,7 +1,8 @@
  GetStatic←{
      ⍝ ⍵    = relative path to file on disk
+     _←⍺ ##.##.AuthorizeUser ⍵
      response←⍺
-     path←HtmlDir,1↓⍵
+     path←HtmlDir,1↓⍵.Path
      0=⎕NEXISTS path:response{⍺.StatusCode←404 ⋄ ⍺}''
      response.IsFile←1
      response.ContentType←##.##.rumba.Core.FilenameToContentType path

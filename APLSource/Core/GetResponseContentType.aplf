@@ -1,7 +1,7 @@
  GetResponseContentType←{
      er←⍺
      request←⍵
-     vm vc←er.ValidRequestTypes
+     vm vc←⊂[0]er.ValidRequestTypes
      index←vm⍳⊆request.Method
      acceptedTypes←index⊃vc
      accept←request rumba.Core.GetHeaderValue'accept'

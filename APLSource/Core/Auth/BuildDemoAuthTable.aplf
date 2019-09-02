@@ -1,0 +1,61 @@
+ BuildDemoAuthTable←{
+    ⍝ Access table is json object structure with the key
+    ⍝ being the user access id.  This allows for optimized
+    ⍝ indexing if you chose to use a key store optimized
+    ⍝ database.  I.e. dynamodb
+    ⍝
+    ⍝
+    ⍝ Create a namespace with dummy access keys and rights
+    ⍝ accessKey     = user access key (username).  18 digits starting with "A"
+    ⍝ secretKey     = password key.    18 digits starting with "S"
+    ⍝               = !!!! In production Secret key should be hashed with a salt at MINIMUM!!!!
+    ⍝ active        = true/false boolean whether user is disabled
+    ⍝ modifiedOn    = UTC timestamp
+    ⍝ createdOn     = UTC when user was created
+    ⍝ expiresOn     = NOT IMPLEMENTED!! Need date time library!! default is null.  If set, when does user access stop in UTC
+    ⍝ admin         = true/false if unrestricted admin
+    ⍝ apps          = array of named object for each (app) containing endpoints.  Access rights are per method.  All accessible methods for a resoruce must be added
+    ⍝               = user table should be updated explicity to add permissions to new users or apps
+    ⍝               = Updating tables with explicit resoruce access prevents us from mistakenly giving access to wrong users
+    ⍝
+    ⍝ Note*         = app worspace paths with periods are encoded with a del ∆
+    ⍝
+
+    ⍝ ⍺     : 0     = generate random keys
+    ⍝ ⍺     : 1     = ues 0 to n keys for count.  Allows creating repeating keys for testing
+     ⍺←1
+
+     genKeyRandom←{(' '⎕R'0')⍺,17↑⍕⌈100000000×?0 0}
+     genKeySeq←{⍺,,'ZI17'⎕FMT 1+⍵}
+     genKey←⍎⍺⊃'genKeyRandom' 'genKeySeq'
+     genAccess←'A'∘genKey
+     genSecret←'S'∘genKey
+
+     gc←genAccess¨⍺×⍳⍵
+
+     keys←⎕NS''
+
+     _←keys{
+         kn←⍵
+         _←kn ⍺.⎕NS''
+         key←⍺⍎kn
+         key.secretKey←genSecret 0
+         key.active←⊂'true'
+         key.(modifiedOn createdOn)←⊆##.aws.Utils.GetTimeStamp
+         key.expiresOn←⊂'null'
+         key.admin←⊂'false'
+         _←'apps'key.⎕NS''
+         apps←key⍎'apps'
+         _←apps{⍵ ⍺.⎕NS''}¨##.Settings.Apps.name
+         appRefs←apps⍎¨apps.⎕NL ¯9
+         appRefs.name←##.Settings.Apps.name
+         _←appRefs{
+             epnames←⍵.⎕NL ¯9
+             ops←{⍵.Operations}¨⍵.⍎¨epnames
+             ⍎'⍺.(',(⍕epnames),')←ops'
+         }¨⍎¨##.Settings.Apps.ref
+         key
+     }¨gc
+
+     keys
+ }

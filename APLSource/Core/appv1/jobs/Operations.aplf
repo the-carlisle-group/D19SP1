@@ -1,0 +1,3 @@
+ Z←Operations
+ ⍝ Array of valid operations
+ Z←'ListJobs' 'GetJob'

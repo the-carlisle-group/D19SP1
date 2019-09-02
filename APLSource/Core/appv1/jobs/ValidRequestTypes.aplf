@@ -1,0 +1,3 @@
+ Z←ValidRequestTypes
+ Z←0 2⍴''
+ Z⍪←'GET'(,⊆'application/json')

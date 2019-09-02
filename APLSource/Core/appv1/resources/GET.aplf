@@ -1,0 +1,4 @@
+ GET←{
+     3=≢⍵.Segments:⍺ GetResource ⍵
+     ⍺
+ }
