@@ -2,8 +2,6 @@
 
  ⎕TNAME←'Access Table Refresh'
 
- ⎕TPUT AccessTableSyncTokenID
-
  ##._accessTableUpdating←1
 
  :While 1

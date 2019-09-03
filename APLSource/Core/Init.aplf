@@ -69,11 +69,6 @@
  ⍝    _←2 ⎕NDELETE Settings.localResourceStore  ⍝ delete if not empty
      _←3 ⎕MKDIR Settings.localResourceStore
 
-     ⍝ Init user access rights table
-     ⍝ Runs in a thread and refhresh the _accessTable at interval
-     ⍝ set by settings.json -> Settings.AuthTableRefresh in seconds
-     _←Auth.InitAccessTableRefresh&''
-
      ⍝ Should dyalog listen for ride connections?
      useRide←Settings.RideEnabled≡⊂'true'
      useRide←useRide∧'W'≢↑↑v
@@ -109,6 +104,13 @@
      ⍝ Do not if it aleady exists.
      _←CreateAppBucket Settings
      _←InitBucketRefs''
+
+     ⍝ Init user access rights table
+     ⍝ Runs in a thread and refhresh the _accessTable at interval
+     ⍝ set by settings.json -> Settings.AuthTableRefresh in seconds
+     ⍝ Done after project S3 bucket is already created.
+     _←Auth.CreateAccessTableNotExist''
+     _←Auth.InitAccessTableRefresh&''
 
      ⍝ Start the secure REST API Rumba server.
      ⍝ Create a global ref to the server.

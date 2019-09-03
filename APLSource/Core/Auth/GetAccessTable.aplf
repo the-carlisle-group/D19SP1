@@ -1,15 +1,28 @@
- GetAccessTable;newUserTable
+ GetAccessTable;newUserTable;b;o
 
- ⎕TGET AccessTableSyncTokenID
  ##._accessTableUpdating←1
 
- ⍝:If ##.Settings.useAWS
-⍝
-⍝     stop
-⍝     newUserTable←''
-⍝ :Else
- newUserTable←⎕JSON 0⊃⎕NGET ##.##.AcreConfig.ProjectFolder,'accessTable.json'
-⍝ :EndIf
+ :If ##.Settings.useAWS
+     b←##.BucketRef
+     o←##.aws.S3.Object.New b
+     o.Key←∊1↓⎕NPARTS ##.Settings.AuthTableObjectURI
+
+     ⍝ is the table available?
+     :Trap 404
+         o.GetValue
+     :Else
+     ⍝ if not, get out making sure the current accesstable is deleted
+     ⍝ and updating flag NOT reset
+         ⎕←'Updated user access not found on S3!'
+         ##.⎕EX'_accessTable'
+         ##._accessTableUpdating←1
+         :Return
+     :EndTrap
+     newUserTable←⎕JSON o.Value
+     ⎕←'Updated user access table from S3.'
+ :Else
+     newUserTable←⎕JSON 0⊃⎕NGET ##.##.AcreConfig.ProjectFolder,'accessTable.json'
+ :EndIf
 
  ##.⎕EX'_accessTable'
  ##._accessTable←newUserTable

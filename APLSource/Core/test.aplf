@@ -1,0 +1,15 @@
+ Z←test;aws;c;b;o;ac;sk
+ ⍝'{youraccesskey}' '{yoursecretkey}'
+ ac←'AKIAIXRWYA3E6JQMZFVQ'
+ sk←'LDZA5u8akulC3Z00BL8cPBwkyHW5rhHrhm2jSxT9'
+ aws←#.CarlisleGroup.AWSTools
+ aws.Init
+ c←aws.Client.New'S3' 'us-east-2'
+ c.(AccessKey SecretKey)←ac sk
+ b←aws.S3.Bucket.New c'MYBUCKET'
+ o←aws.S3.Object.New b
+ o.ContentType←'text/plain'
+ o.Value←'this is some text'
+ o.Key←'myname_mydata.txt'      ⍝ o.Key ← ‘johndoe_mydata.txt’
+ o.Put
+ Z←ob.URI

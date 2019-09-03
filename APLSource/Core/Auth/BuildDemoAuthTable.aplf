@@ -33,9 +33,7 @@
 
      gc←genAccess¨⍺×⍳⍵
 
-     keys←⎕NS''
-
-     _←keys{
+     addUser←{
          kn←⍵
          _←kn ⍺.⎕NS''
          key←⍺⍎kn
@@ -55,7 +53,16 @@
              ⍎'⍺.(',(⍕epnames),')←ops'
          }¨⍎¨##.Settings.Apps.ref
          key
-     }¨gc
+     }
 
+     keys←⎕NS''
+
+     _←keys addUser¨gc
+
+     0=⍺:keys
+
+     ⍝ Add basic user called dyalog and password is password
+     dyalog←keys addUser'dyalog'
+     dyalog.secretKey←'password'
      keys
  }

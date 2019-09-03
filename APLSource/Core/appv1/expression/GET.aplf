@@ -1,4 +1,5 @@
  GET←{
      _←⍺ ##.##.LogRequestToS3 ⍵.Header
+     (≢⍵.Segments)<3:⍺
      ⍺ ProcessExpression ⍵
  }

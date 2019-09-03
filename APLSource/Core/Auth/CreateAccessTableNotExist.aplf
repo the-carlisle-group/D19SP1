@@ -1,0 +1,13 @@
+ Z←CreateAccessTableNotExist X;b;o
+⍝ Create a dummy access table if it does not exist on S3
+ Z←0
+ →(~##.Settings.useAWS)/0
+
+ b←##.BucketRef
+ o←##.aws.S3.Object.New b
+ o.Key←∊1↓⎕NPARTS ##.Settings.AuthTableObjectURI
+ :Trap 404
+     o.GetMetaData          ⍝ will throw exception if not found
+ :Else
+     GenerateSeqKeyAccessFile''
+ :EndTrap

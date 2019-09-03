@@ -24,6 +24,11 @@
  :Else
      ob←⎕NS''
  :EndIf
+
+ ob.ContentType←GetContentTypeFromOutputType ns.outputType
+ ob.Key←ns.id,GetFileExtFromOutputType ns.outputType
+ ob.MetaData←('x-amz-meta-author'⎕AN)('x-amz-meta-type'ns.outputType)('x-amz-meta-apl-version'(¯1↓∊(∊(##.##.Utils.APLVersion,¨' '))))
+
  ⍝ Create job state
  ##.jobs.Jobs,←ns
  ns.status←'new'
@@ -57,7 +62,6 @@
  ns.resultSize←≢d
  ns.status←'uploading'
  ns←ns.id ##.jobs.UpdateJob''
- ob.ContentType←GetContentTypeFromOutputType ns.outputType
  ob.Value←d
 
  :If ##.##.Settings.useAWS
@@ -66,7 +70,7 @@
      ob⍎ns.s3PutType
      ns.resource←ob.GeneratePreSignedGet 360 ⍝ 5 min
  :Else
-     tp←1⊃⎕NPARTS ##.##.Utils.GetTempFile''
+     tp←ns.id
      (⎕JSON ob)⎕NPUT(##.##.Settings.localResourceStore,tp)1
      ns.resource←'/demoapp/resources/',tp
  :EndIf
