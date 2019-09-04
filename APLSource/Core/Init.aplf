@@ -1,11 +1,11 @@
  Init←{
      ⍝ Disable any ride connection
-     _←(3502⌶)0
+     ⍝ _←(3502⌶)0
 
      ⍝ Optional left arg defines error trapping.  Default is none.
      ⍺←⍬
 
-     ⍝ Print ⎕DMX ot session on any startup error
+     ⍝ Print ⎕DMX to session on any startup error
      ⍺::{ns←⎕NS'' ⋄ ns.dmx←⎕DMX ⋄ ns.aplVersion←Utils.APLVersion ⋄ ⎕←1(⎕JSON⍠'Compact' 0)ns}''
      v←Utils.APLVersion
 
@@ -33,7 +33,7 @@
 
      ⍝ Init Dyalog Crypto Library.
      ok←dcl.Crypt.Init dcl.AcreConfig.ProjectFolder,'Assets/Runtime/'
-     0≠ok:⎕SIGNAL⊂('EN' 11)('EM' 'DCL library could not be initiazlied.')('Message'('DCL Error: ',⍕ok))
+     0≠ok:⎕SIGNAL⊂('EN' 11)('EM' 'DCL library could not be initialized.')('Message'('DCL Error: ',⍕ok))
 
      ⍝ Initialize conga dll and class
      _←rumba.Core.InitConga''
@@ -48,7 +48,7 @@
      ⍝ Settings.json file path.
      settingsPath←##.AcreConfig.ProjectFolder,'settings.json'
 
-     ⍝ Is settings.josn file available
+     ⍝ Is settings.json file available
      ~⎕NEXISTS settingsPath:⎕SIGNAL⊂('EN' 22)('EM' 'File settings.json is missing')('Message' 'Did you create a settings file from the settings-template.json file?')
 
      ⍝ Read in settings file.
@@ -70,16 +70,16 @@
      _←3 ⎕MKDIR Settings.localResourceStore
 
      ⍝ Should dyalog listen for ride connections?
-     useRide←Settings.RideEnabled≡⊂'true'
-     useRide←useRide∧'W'≢↑↑v
+     ⍝useRide←Settings.RideEnabled≡⊂'true'
+     ⍝useRide←useRide∧'W'≢↑↑v
 
      ⍝ RIDE only on non linux right now
-     ⎕←useRide/'RIDE Server enabled on port ',⍕Settings.RidePort
-     ok←useRide{
-         r←3502⌶0
-         r←3502⌶'SERVE::',⍕⍵ ⍝ Update init string
-         3502⌶⍺
-     }Settings.RidePort
+     ⍝⎕←useRide/'RIDE Server enabled on port ',⍕Settings.RidePort
+     ⍝ok←useRide{
+     ⍝    r←3502⌶0
+     ⍝    r←3502⌶'SERVE::',⍕⍵ ⍝ Update init string
+     ⍝    3502⌶⍺
+     ⍝}Settings.RidePort
 
      ⍝ Verify all endpoints have correct min required
      ⍝ variables and functions
@@ -95,8 +95,8 @@
 
      ⍝ User must be root (admin) to bind port below 1025
      ⍝ on linux.
-     ⍝ Check if Linnux, if NOT the  root user a and port below 1025
-     ⍝ Throw an error if info that the proces's wont start.
+     ⍝ Check if Linux, if NOT the root user and port below 1025
+     ⍝ Throw an error if we think the process wont start.
      ⎕←((⎕AN≢'root')∧('W'≢↑↑v)∧Settings.Port<1025)/'WARNING!!! Unix process will not start the server on port below 1024 without root privileges.'
 
 
