@@ -1,2 +1,4 @@
- {Z}←InitApp
+ {Z}←InitApp;port
+ port←##.Core.Settings.Port
+ ⎕←']open https://localhost',((port≠443)/':',⍕port),'/chatter/chat'
  Z←0
