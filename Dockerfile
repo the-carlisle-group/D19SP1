@@ -20,7 +20,9 @@ RUN git clone https://github.com/the-carlisle-group/DyalogDCL /app/DyalogDCL
 RUN git clone https://github.com/the-carlisle-group/AWSTools /app/AWSTools
 RUN git clone https://github.com/the-carlisle-group/D19SP1 /app/D19SP1
 
-# Add config file and bootstrap ws (not part of the repo - see .gitignore)
+# Add Acre UCMDs where Dyalog APL will find it by default
 ADD Assets/Runtime/acre14.0/acre.dws /home/dyalog/MyUCMDs/
 ADD Assets/Runtime/acre14.0/acre.dyalog /home/dyalog/MyUCMDs/
+
+# Add bootstrap - dyalog/dyalog container will find and use it
 ADD start.dyapp /app/
