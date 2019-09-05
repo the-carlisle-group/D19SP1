@@ -17,7 +17,20 @@
      :Return
  :EndIf
 
- ⍝ check if on ec2 instance
+                                    ⍝ check if on ec2 instance
  mt←#.CarlisleGroup.AWSTools.EC2.MetaData
+
+ :Trap 0
+     ak sk←mt.SecurityCredentials.(AccessKeyId SecretAccessKey)
+ :Else
+     ak sk←'' ''
+ :EndTrap
+
+ :If ∧/0≠≢¨ak sk
+     ⍝ keys set via cmd
+     Settings.AWS_AccessKey←ak
+     Settings.AWS_SecretKey←sk
+     :Return
+ :EndIf
 
  'AWS keys not available.'⎕SIGNAL 11
