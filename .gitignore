@@ -1,7 +1,6 @@
 .acre/
 aplcore
 settings.json
+settings-docker.json
 rootkey.csv
-bootstrap.dws
 accessTable.json
-
