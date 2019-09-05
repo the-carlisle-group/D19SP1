@@ -9,6 +9,9 @@
     ⍝ accessKey     = user access key (username).  18 digits starting with "A"
     ⍝ secretKey     = password key.    18 digits starting with "S"
     ⍝               = !!!! In production Secret key should be hashed with a salt at MINIMUM!!!!
+    ⍝ details       = namespace with personal details
+    ⍝   .name       = user actual name
+    ⍝   .dob        = date of birth in YYYYMMDD
     ⍝ active        = true/false boolean whether user is disabled
     ⍝ modifiedOn    = UTC timestamp
     ⍝ createdOn     = UTC when user was created
@@ -31,13 +34,19 @@
      genAccess←'A'∘genKey
      genSecret←'S'∘genKey
 
-     gc←genAccess¨⍺×⍳⍵
+   ⍝  gc←genAccess¨⍺×⍳⍵
+     gc←(⊆'user_'),¨⍕¨⍳⍵
 
      addUser←{
          kn←⍵
          _←kn ⍺.⎕NS''
          key←⍺⍎kn
-         key.secretKey←genSecret 0
+         key.id←kn
+⍝         key.secretKey←genSecret 0
+         key.secretKey←'password'
+         key.details←⎕NS ⍬
+         key.details.name←kn
+         key.details.dob←⊂'null'
          key.active←⊂'true'
          key.(modifiedOn createdOn)←⊆##.aws.Utils.GetTimeStamp
          key.expiresOn←⊂'null'
@@ -45,11 +54,11 @@
          _←'apps'key.⎕NS''
          apps←key⍎'apps'
          _←apps{⍵ ⍺.⎕NS''}¨##.Settings.Apps.name
-         appRefs←apps⍎¨apps.⎕NL ¯9
-         appRefs.name←##.Settings.Apps.name
+         appRefs←apps⍎¨##.Settings.Apps.name
+
          _←appRefs{
              epnames←⍵.⎕NL ¯9
-             ops←{⍵.Operations}¨⍵.⍎¨epnames
+             ops←epnames{1=≢⍺:↑⍵ ⋄ ⍵}(⍵.⍎¨epnames).Operations
              ⍎'⍺.(',(⍕epnames),')←ops'
          }¨⍎¨##.Settings.Apps.ref
          key

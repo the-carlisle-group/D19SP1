@@ -1,0 +1,43 @@
+ GetMessages←{
+  ⍝ Get all message from S3
+  ⍝ Called by GET
+     _←⍺ ##.##.Core.AuthorizeUser ⍵
+
+     ⍝ Get all object that start path starts with /chatter*
+     obs←##.##.Core.BucketRef.GetObjects'' 0 'chatter'
+
+     ⍝ send back empty json array if none
+     0=≢obs:⍺{
+         ⍺.Content←⎕JSON ⍬
+         ⍺.StatusCode←200
+         ⍺
+     }⍵
+
+     ⍝ convert aws timestamps to date.time and sort
+     ts←⍎¨'.'@('T'=⊢)¨¯1↓¨obs.LastModified
+     obs←obs[⍒ts]
+
+     ⍝ get each object vaule.  put in a trap just in case
+     v←{0::1 ⋄ _←⍵.GetValue ⋄ 1}¨obs
+
+     ⍝ keep only valid objects
+     validObs←v/obs
+
+     ⍝ convert each s3 object to response object
+     res←{
+         mh mv←↓⍉⊃⍵.MetaData
+         n←⎕NS ⍬
+         n.message←(⎕JSON ⍵.Value).message
+         n.createdOn←(mh⍳⊆'time-stamp')⊃mv
+         n.createdBy←(mh⍳⊆'user-id')⊃mv
+         n.createdByName←(mh⍳⊆'user-name')⊃mv
+         n.s3Link←⍵.URI
+         n.href←'/chatter/chat/',⍵.Key
+         n
+     }¨validObs
+
+     ⍝ set response and send
+     ⍺.Content←⎕JSON res
+     ⍺.StatusCode←200
+     ⍺
+ }

@@ -1,0 +1,39 @@
+ AddNewMessage←{
+     ⍝ Add new new message to S3 and return a message object
+     ⍝ Called by POST @ /chatter/chat/
+     _←⍺ ##.##.Core.AuthorizeUser ⍵
+
+     ⍝ get message content
+     msg←⎕JSON ⍵.Content
+
+     ⍝ create a random key
+     ts←#.CarlisleGroup.AWSTools.Utils.GetTimeStamp
+     key←ts,'_',⍕⌈100000000×?0
+     aws←#.CarlisleGroup.AWSTools.S3
+
+     ⍝ set virtual s3 bucket path
+     pathPrefix←'chatter/messages/'
+
+     ⍝ create s3 object and put to aws/
+     ob←aws.Object.New ##.##.Core.BucketRef
+     ob.Folder←pathPrefix,⍵.user.id
+     ob.Key←key
+     ob.MetaData←('origin-host'##.##.Core.Settings.hostName)('user-id'⍵.user.id)('user-name'⍵.user.details.name)('time-stamp'ts)
+     ob.Value←⎕JSON msg
+     _←ob.Put
+
+     ⍝ create a response structure
+     res←⎕NS''
+     res.message←msg.message
+     res.createdOn←ts
+     res.createdBy←⍵.user.id
+     res.createdByName←⍵.user.details.name
+     res.s3Link←ob.URI
+     res.href←'/chatter/chat/',(≢pathPrefix)↓ob.Folder,ob.Key
+
+     ⍝ set response
+     ⍺.Headers←(⊂'Location'res.href)
+     ⍺.Content←⎕JSON res
+     ⍺.StatusCode←201
+     ⍺
+ }

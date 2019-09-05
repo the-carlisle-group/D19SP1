@@ -2,15 +2,16 @@
      j←1 BuildDemoAuthTable 10
      j←(⎕JSON⍠'Compact' 0)j
      fn←##.##.AcreConfig.ProjectFolder,'accessTable.json'
-     ok←j ⎕NPUT fn 1
-     ~##.Settings.useAWS:_←0
+
+     ~##.Settings.useAWS:j ⎕NPUT fn 1
 
      b←##.BucketRef
      o←##.aws.S3.Object.New b
+     o.Key←∊1↓⎕NPARTS ##.Settings.AuthTableObjectURI
+     _←o.Delete
      o.ACL←'private'
      o.ContentType←'application/json'
      o.Value←j
-     o.Key←∊1↓⎕NPARTS ##.Settings.AuthTableObjectURI
      _←o.Put
      1:_←0
  }

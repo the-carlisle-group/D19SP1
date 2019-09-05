@@ -1,0 +1,28 @@
+ GetMessage←{
+     ⍝ Get indivual message by id and path
+     ⍝ called by GET
+     _←⍺ ##.##.Core.AuthorizeUser ⍵
+     aws←#.CarlisleGroup.AWSTools.S3
+
+     ⍝ Create local s3 object and set to existing folder and key
+     ob←aws.Object.New ##.##.Core.BucketRef
+     ob.Key←'chatter/messages',∊'/',¨2↓⍵.Segments
+
+     ⍝ get object value, which also sets the metadata
+     _←ob.GetValue
+     mh mv←↓⍉⊃ob.MetaData
+
+     ⍝ create a response structure
+     n←⎕NS ⍬
+     n.message←(⎕JSON ob.Value).message
+     n.createdOn←(mh⍳⊆'time-stamp')⊃mv
+     n.createdBy←(mh⍳⊆'user-id')⊃mv
+     n.createdByName←(mh⍳⊆'user-name')⊃mv
+     n.s3Link←ob.URI
+     n.href←'/chatter/chat/',ob.Key
+
+     ⍝ set and send response
+     ⍺.Content←⎕JSON n
+     ⍺.StatusCode←200
+     ⍺
+ }

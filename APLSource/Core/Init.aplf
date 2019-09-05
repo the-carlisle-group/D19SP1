@@ -1,7 +1,4 @@
  Init←{
-     ⍝ Disable any ride connection
-     ⍝ _←(3502⌶)0
-
      ⍝ Optional left arg defines error trapping.  Default is none.
      ⍺←⍬
 
@@ -59,7 +56,7 @@
 
      ⍝ Set Settings.hostname.  Will be used when more than one
      ⍝ server is hosting requests.
-     Settings.hostName←⎕CMD'hostname'
+     Settings.hostName←(∊⎕CMD'hostname')~' '
 
      ⍝ useAWS←1  = default
      ⍝ if no (0), save all responses locally and send local link
@@ -67,7 +64,7 @@
      Settings.useAWS←1
      Settings.localResourceStore←(Utils.GetTempDir''),'/apiApp/'
  ⍝    _←2 ⎕NDELETE Settings.localResourceStore  ⍝ delete if not empty
-     _←3 ⎕MKDIR Settings.localResourceStore
+ ⍝    _←3 ⎕MKDIR Settings.localResourceStore
 
      ⍝ Should dyalog listen for ride connections?
      ⍝useRide←Settings.RideEnabled≡⊂'true'

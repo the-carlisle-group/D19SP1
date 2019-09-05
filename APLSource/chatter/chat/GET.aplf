@@ -1,0 +1,9 @@
+ GET←{
+ ⍝ GET HTTP Handler method
+ ⍝ curl -u user_1:password -k -X GET https://localhost/chatter/chat/
+ ⍝ curl -u user_1:password -k -X GET https://localhost/chatter/chat/dyalog/20190905T023315Z_62413103
+     segCt←≢⍵.Segments
+     2=segCt:⍺ GetMessages ⍵
+     4=segCt:⍺ GetMessage ⍵
+     ⍺
+ }

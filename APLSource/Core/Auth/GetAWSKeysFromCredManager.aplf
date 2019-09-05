@@ -1,0 +1,20 @@
+ Z←GetAWSKeysFromCredManager credName;⎕USING;credRead;ptr;CRED_TYPE_GENERIC;credFree;r;STRNCPY;STRNCPYA;STRNCPYW;MEMCPY;getString;lenString;location
+⍝ ⎕USING←'System' 'Windows.Security.Credentials.dll,Windows.dll'
+
+ ⎕NA'P  dyalog64|STRNCPY              P P P'
+ ⎕NA'P  dyalog64|STRNCPYA             P P P'
+ ⎕NA'P  dyalog64|STRNCPYW             P P P'
+ ⎕NA'P  dyalog64|MEMCPY               P P P'
+ 'getString'⎕NA'dyalog64|STRNCPY >0T1[] P U4'
+ 'lenString'⎕NA'P dyalog64|STRLEN P'
+ 'credRead'⎕NA'I1 Advapi32.dll|CredReadA <0T[] U4 U4 >P'
+ CRED_TYPE_GENERIC←1
+ r ptr←credRead credName CRED_TYPE_GENERIC 0 0
+ location←ptr+4+4 ⍝ptr+ flags + type
+ location+←lenString location ⍝ + length of targetname
+ location+←lenString location
+
+ 'credFree'⎕NA'Advapi32.dll|CredReadA P'
+ credFree ptr
+
+ a

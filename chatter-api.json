@@ -1,0 +1,152 @@
+{
+    "openapi": "3.0.0",
+    "servers": [
+        {
+            "url": "https://localhost/chatter",
+            "variables": {}
+        }
+    ],
+    "info": {
+        "description": "Sample chat app in the D19 REST server.",
+        "version": "1.0.0",
+        "title": "D19SP1 Chatter"
+    },
+    "paths": {
+        "/chat": {
+            "get": {
+                "summary": "Get the latest messages",
+                "description": "",
+                "parameters": [],
+                "operationId": "GetMessages",
+                "responses": {
+                    "200":{
+                        "description": "Get most recent messages.  Last 20 by default.",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "type":"array",
+                                    "items":{
+                                        "$ref":"#/components/schemas/message"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "",
+                "description": "",
+                "operationId": "AddNewMessage",
+                "responses": {
+                    "201":{
+                        "description": "return new message",
+                        "headers": {
+                            "location":{
+                                "schema":{                                    
+                                    "type":"string",
+                                    "description": "chatter server uri of message"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "type":"array",
+                                    "items":{
+                                        "$ref":"#/components/schemas/message"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message":{
+                                        "type":"string",
+                                        "description": "new message"
+                                    }
+                                }                                
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/chat/{userId}/{messageId}": {
+            "description": "access to individual message via api",
+            "parameters": [
+                {
+                    "name": "userId",
+                    "in": "path",
+                    "description": "User id.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "messageId",
+                    "in": "path",
+                    "description": "message id.",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "get": {
+                "summary": "",
+                "description": "",
+                "parameters": [],
+                "operationId": "GetMessageById",
+                "responses": {
+                    "default": {
+                        "description": "Default response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "message": {
+                "type": "object",
+                "properties": {
+                    "message":{
+                        "type": "string"
+                    },
+                    "createdOn":{
+                        "type": "string"
+                    },
+                    "createdBy":{
+                        "type": "string"
+                    },
+                    "s3Link":{
+                        "type":"string",
+                        "format": "uri"
+                    },
+                    "href":{
+                        "type": "string",
+                        "description": "link to msg on this server"
+                    },
+                    "name":{
+                        "type":"string",
+                        "description": "display name of the user"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "name": {
+                "type": "http",
+                "scheme": "basic"
+            }
+        }
+    }
+}

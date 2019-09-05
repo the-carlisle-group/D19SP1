@@ -1,0 +1,6 @@
+ POST←{
+ ⍝ POST HTTP Handler method
+ ⍝ curl -u dyalog:password -k -X POST https://localhost/chatter/chat -H "Content-type: application/json" -d "{ \"message\": \"this is my message\"}"
+     2≠≢⍵.Segments:⍺        ⍝ default 404 not found
+     ⍺ AddNewMessage ⍵
+ }
