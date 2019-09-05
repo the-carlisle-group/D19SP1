@@ -1,0 +1,23 @@
+ {Z}←GetAWSKeys;ak;sk;mt
+ Z←0
+
+ :If ∧/2=⌊¨Settings.⎕NC'AWS_AccessKey' 'AWS_SecretKey'
+     ⍝ keys set in file
+     :Return
+ :EndIf
+
+
+ ak←Utils.GetEnv'AWS_AccessKey'
+ sk←Utils.GetEnv'AWS_SecretKey'
+
+ :If ∧/0≠≢¨ak sk
+     ⍝ keys set via cmd
+     Settings.AWS_AccessKey←ak
+     Settings.AWS_SecretKey←sk
+     :Return
+ :EndIf
+
+ ⍝ check if on ec2 instance
+ mt←#.CarlisleGroup.AWSTools.EC2.MetaData
+
+ 'AWS keys not available.'⎕SIGNAL 11

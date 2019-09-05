@@ -47,6 +47,7 @@
 
      ⍝ Start listening.  Remember, a threaded OnRumbaRequest function
      ⍝ will be fired after every successful request.
+     s.TLSFlag←32               ⍝ <- do not ask for cert   CertAcceptWithoutValidating
      r←s rumba.Core.Start 0
      s
  }

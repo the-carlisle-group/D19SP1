@@ -96,6 +96,7 @@
      ⍝ Throw an error if we think the process wont start.
      ⎕←((⎕AN≢'root')∧('W'≢↑↑v)∧Settings.Port<1025)/'WARNING!!! Unix process will not start the server on port below 1024 without root privileges.'
 
+     _←GetAWSKeys
 
      ⍝ Init the Settings.AWS_Bucket S3 bucket on Amazon.
      ⍝ Do not if it aleady exists.

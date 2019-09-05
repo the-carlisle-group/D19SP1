@@ -1,7 +1,5 @@
 {
     "TrapErrors": true,
-    "AWS_AccessKey": "keygoeshere",
-    "AWS_SecretKey": "secretkeygoeshere",
     "AWS_Bucket": "myapp-norbert",
     "AWS_Region": "us-east-1",
     "Port": 443,
