@@ -1,11 +1,22 @@
- {Z}←GetAWSKeys;ak;sk;mt
+ {Z}←GetAWSKeys;ak;sk;mt;tk
  Z←0
 
- :If ∧/2=⌊¨Settings.⎕NC'AWS_AccessKey' 'AWS_SecretKey'
-     ⍝ keys set in file
+ Settings.AWS_Token←''  ⍝ default to none
+ ak sk tk←'' '' ''
+
+ :Trap 0
+     mt←#.CarlisleGroup.AWSTools.EC2.MetaData.IAM
+     ak sk tk←mt.securitycredentials.role.(AccessKeyId SecretAccessKey Token)
+ :EndTrap
+
+ :If ∧/0≠≢¨ak sk tk
+     ⍝ keys set via cmd
+     Settings.AWS_AccessKey←ak
+     Settings.AWS_SecretKey←sk
+     Settings.AWS_Token←tk
+     ⎕←(('ASIA'≡4↑Settings.AWS_AccessKey)/'Temporary '),'keys onbtained from EC2 instance.'
      :Return
  :EndIf
-
 
  ak←Utils.GetEnv'AWS_AccessKey'
  sk←Utils.GetEnv'AWS_SecretKey'
@@ -17,20 +28,9 @@
      :Return
  :EndIf
 
-                                    ⍝ check if on ec2 instance
- mt←#.CarlisleGroup.AWSTools.EC2.MetaData
-
- :Trap 0
-     ak sk←mt.SecurityCredentials.(AccessKeyId SecretAccessKey)
- :Else
-     ak sk←'' ''
- :EndTrap
-
- :If ∧/0≠≢¨ak sk
-     ⍝ keys set via cmd
-     Settings.AWS_AccessKey←ak
-     Settings.AWS_SecretKey←sk
+ :If ∧/2=⌊¨Settings.⎕NC'AWS_AccessKey' 'AWS_SecretKey'
+     ⍝ keys set in file
      :Return
  :EndIf
 
- 'AWS keys not available.'⎕SIGNAL 11
+ 'Keys not available.'⎕SIGNAL 11
