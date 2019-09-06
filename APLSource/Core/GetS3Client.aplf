@@ -2,5 +2,6 @@
      c←aws.Client.New's3'Settings.AWS_Region
      c.AccessKey←⍵.AWS_AccessKey
      c.SecretKey←⍵.AWS_SecretKey
+     c.Token←⍵.AWS_Token
      c
  }
