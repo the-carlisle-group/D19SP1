@@ -1,6 +1,5 @@
 .acre/
 aplcore
 settings.json
-settings-docker.json
 rootkey.csv
 accessTable.json
