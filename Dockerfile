@@ -25,5 +25,5 @@ ADD Assets/Runtime/acre14.0/acre.dws /home/dyalog/MyUCMDs/
 ADD Assets/Runtime/acre14.0/acre.dyalog /home/dyalog/MyUCMDs/
 
 # Add bootstrap - dyalog/dyalog container will find and use it
-ADD settings-linux.json /app/D19SP1/
+ADD settings-linux.json /app/D19SP1/settings.json
 ADD start.dyapp /app/
