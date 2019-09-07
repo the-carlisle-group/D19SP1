@@ -1,1 +1,0 @@
-docker run -p 4502:4502 -p 443:10443 -e AWS_AccessKey="AKIAVEG2KDMMDL3OVJHJ" -e AWS_SecretKey="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" mkromberg/d19sp1
