@@ -1,0 +1,1 @@
+docker build -t mkromberg/d19sp1 .
