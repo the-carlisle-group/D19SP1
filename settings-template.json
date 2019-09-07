@@ -1,7 +1,7 @@
 {
     "TrapErrors": true,
-    "AWS_Bucket": "myapp-norbert",
-    "AWS_Region": "us-east-1",
+    "AWS_Bucket": "d19apps",
+    "AWS_Region": "us-east-2",
     "Port": 443,
     "Secure": true,
     "LogToSession": true,
@@ -9,8 +9,17 @@
     "RidePort": 4502,
     "SSLCertPath": "Assets/Runtime/Certs/Server/localhost-cert.pem",
     "SSLKeyPath":  "Assets/Runtime/Certs/Server/localhost-key.pem",
-    "Apps":[{"name":"demoapp", "ref":"#.D19SP1.Core.appv1"}],
+    "Apps": [
+        {
+            "name": "demoapp",
+            "ref": "#.D19SP1.Core.appv1"
+        },
+        {
+            "name":"chatter",
+            "ref": "#.D19SP1.chatter"
+        }
+    ],
     "AuthTableType":"S3",
-    "AuthTableObjectURI":"myapp-norbert.s3.awsappi.com/authtable.json",
-    "AuthTableRefresh": 360
+    "AuthTableObjectURI":"authtable.json",
+    "AuthTableRefresh": 120
 }
