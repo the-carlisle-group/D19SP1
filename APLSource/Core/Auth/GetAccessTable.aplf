@@ -2,10 +2,10 @@
 
  ##._accessTableUpdating←1
 
- :If ##.Settings.useAWS
+ :If ##.__settings.useAWS
      b←##.BucketRef
      o←##.aws.S3.Object.New b
-     o.Key←∊1↓⎕NPARTS ##.Settings.AuthTableObjectURI
+     o.Key←∊1↓⎕NPARTS ##.__settings.AuthTableObjectURI
 
      ⍝ is the table available?
      :Trap 404

@@ -53,14 +53,14 @@
          key.admin←⊂'false'
          _←'apps'key.⎕NS''
          apps←key⍎'apps'
-         _←apps{⍵ ⍺.⎕NS''}¨##.Settings.Apps.name
-         appRefs←apps⍎¨##.Settings.Apps.name
+         _←apps{⍵ ⍺.⎕NS''}¨##.___settings.Apps.name
+         appRefs←apps⍎¨##.___settings.Apps.name
 
          _←appRefs{
              epnames←⍵.⎕NL ¯9
              ops←epnames{1=≢⍺:↑⍵ ⋄ ⍵}(⍵.⍎¨epnames).Operations
              ⍎'⍺.(',(⍕epnames),')←ops'
-         }¨⍎¨##.Settings.Apps.ref
+         }¨⍎¨##.___settings.Apps.ref
          key
      }
 

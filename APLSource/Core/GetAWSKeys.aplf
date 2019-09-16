@@ -1,7 +1,7 @@
  {Z}←GetAWSKeys;ak;sk;mt;tk
  Z←0
 
- Settings.AWS_Token←''  ⍝ default to none
+ _settings.AWS_Token←''  ⍝ default to none
  ak sk tk←'' '' ''
 
  :Trap 0
@@ -11,10 +11,10 @@
 
  :If ∧/0≠≢¨ak sk tk
      ⍝ keys set via cmd
-     Settings.AWS_AccessKey←ak
-     Settings.AWS_SecretKey←sk
-     Settings.AWS_Token←tk
-     ⎕←(('ASIA'≡4↑Settings.AWS_AccessKey)/'Temporary '),'keys onbtained from EC2 instance.'
+     __settings.AWS_AccessKey←ak
+     __settings.AWS_SecretKey←sk
+     __settings.AWS_Token←tk
+     ⎕←(('ASIA'≡4↑__settings.AWS_AccessKey)/'Temporary '),'keys onbtained from EC2 instance.'
      :Return
  :EndIf
 
@@ -23,12 +23,12 @@
 
  :If ∧/0≠≢¨ak sk
      ⍝ keys set via cmd
-     Settings.AWS_AccessKey←ak
-     Settings.AWS_SecretKey←sk
+     __settings.AWS_AccessKey←ak
+     __settings.AWS_SecretKey←sk
      :Return
  :EndIf
 
- :If ∧/2=⌊¨Settings.⎕NC'AWS_AccessKey' 'AWS_SecretKey'
+ :If ∧/2=⌊¨__settings.⎕NC'AWS_AccessKey' 'AWS_SecretKey'
      ⍝ keys set in file
      :Return
  :EndIf

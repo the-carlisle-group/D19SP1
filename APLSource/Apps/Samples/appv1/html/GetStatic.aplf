@@ -5,7 +5,7 @@
      path←HtmlDir,1↓⍵.Path
      0=⎕NEXISTS path:response{⍺.StatusCode←404 ⋄ ⍺}''
      response.IsFile←1
-     response.ContentType←##.##.rumba.Core.FilenameToContentType path
+     response.ContentType←##.##.⎕SE._rumba.Core.FilenameToContentType path
      response.StatusCode←200
      response.FilePath←path
      response

@@ -5,17 +5,17 @@
          path←('\\'⎕R'/')↑⎕NPARTS ⎕WSID
          path,←('/'≠¯1↑path)/'/'
          ax←path,'Assets/Runtime/'
-         dcl.AcreConfig.ProjectFolder←ax,'DyalogDCL/'
-         rumba.AcreConfig.ProjectFolder←ax,'Rumba/'
+         ⎕SE._dclAcreConfig.ProjectFolder←ax,'DyalogDCL/'
+         ⎕SE._rumbaAcreConfig.ProjectFolder←ax,'Rumba/'
          path
      }##.AcreConfig.ProjectFolder
 
-     ~⎕NEXISTS rumba.AcreConfig.ProjectFolder:'Rumba project folder not found.'⎕SIGNAL 11
-     ~⎕NEXISTS dcl.AcreConfig.ProjectFolder:'DCL project folder not found.'⎕SIGNAL 11
+     ~⎕NEXISTS ⎕SE._rumba.AcreConfig.ProjectFolder:'Rumba project folder not found.'⎕SIGNAL 11
+     ~⎕NEXISTS ⎕SE._dcl.AcreConfig.ProjectFolder:'DCL project folder not found.'⎕SIGNAL 11
 
      ⎕←(30↑'This Project Path: '),##.AcreConfig.ProjectFolder
-     ⎕←(30↑'Rumba Project Path: '),rumba.AcreConfig.ProjectFolder
-     ⎕←(30↑'DCL Project Path: '),dcl.AcreConfig.ProjectFolder
+     ⎕←(30↑'Rumba Project Path: '),⎕SE._rumba.AcreConfig.ProjectFolder
+     ⎕←(30↑'DCL Project Path: '),⎕SE._dcl.AcreConfig.ProjectFolder
 
      1:_←0
  }

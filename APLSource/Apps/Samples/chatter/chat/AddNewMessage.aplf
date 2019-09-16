@@ -18,7 +18,7 @@
      ob←aws.Object.New ##.##.Core.BucketRef
      ob.Folder←pathPrefix,⍵.user.id
      ob.Key←key
-     ob.MetaData←('origin-host'##.##.Core.Settings.hostName)('user-id'⍵.user.id)('user-name'⍵.user.details.name)('time-stamp'ts)
+     ob.MetaData←('origin-host'##.##.Core.___settings.hostName)('user-id'⍵.user.id)('user-name'⍵.user.details.name)('time-stamp'ts)
      ob.Value←⎕JSON msg
      _←ob.Put
 

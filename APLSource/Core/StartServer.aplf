@@ -2,25 +2,25 @@
      ⍝ Start Rumba server
 
      ⍝ Cleaup up any existing server references
-     ok←{0::0 ⋄ ⎕THIS._server rumba.Core.Close 0}0
+     ok←{0::0 ⋄ ⎕THIS._server ⎕SE._rumba.Core.Close 0}0
 
      ⍝ Init Conga.  Redundent but does not hurt anything.
      ⍝              Useful if StartServer is used without the
      ⍝              Init function.
-     _←rumba.Core.InitConga''
+     _←⎕SE._rumba.Core.InitConga''
 
      ⍝ Create Rumba server object
-     s←rumba.Core.NewServer 0
+     s←⎕SE._rumba.Core.NewServer 0
 
      ⍝ Set Rumba server OnRequest event.  Called in a thread, every time
      ⍝ a succesful http requeset was received.
      s.OnRequest←(⍕⎕THIS),'.OnRumbaRequest'
 
      ⍝ Set Rumba level trapping based on settings.json value
-     s.Trap←Settings.TrapErrors≡⊂'true'
+     s.Trap←_settings.TrapErrors≡⊂'true'
 
      ⍝ Set listen port from settings.json value
-     s.Port←Settings.Port
+     s.Port←_settings.Port
      s.LogConga←0
      s.LogHTTP←0
      s.LogRumba←0
@@ -29,27 +29,27 @@
      ⍝ Should http request be printed to session.
      ⍝ Great for debugging but it really slows down
      ⍝ the running code.
-     s.LogHTTPToSession←Settings.LogToSession≡⊂'true'
+     s.LogHTTPToSession←_settings.LogToSession≡⊂'true'
      s.Folder←(Utils.GetTempDir''),'/rumba/'
 
      ⍝ Is the server secure?  It should always be!
      ⍝ Especially, if using Basic Auth schemes.
-     s.Secure←Settings.Secure≡⊂'true'
+     s.Secure←_settings.UseSSL≡⊂'true'
 
      ⍝ Read in server certificates.
      ⍝ The demo is using Dyalog provided certificates that
      ⍝ work for "localhost" but in production you'd want
      ⍝ a set of real certificates signed by a trusted source
      ⍝ and bound to a valid domain.
-     x509←⎕NEW rumba.DRC.X509Cert
-     s.X509←0⊃x509.ReadCertFromFile pf,Settings.SSLCertPath
-     s.X509.KeyOrigin←'DER'(pf,Settings.SSLKeyPath)
+     x509←⎕NEW ⎕SE._rumba.DRC.X509Cert
+     s.X509←0⊃x509.ReadCertFromFile ##.AcreConfig.ProjectFolder,_settings.SSLCertPath
+     s.X509.KeyOrigin←'DER'(##.AcreConfig.ProjectFolder,_settings.SSLKeyPath)
 
      ⍝ Override derfault rumba flag 64 that requests a client certificate
      s.TLSFlag←32               ⍝ <- do not ask for cert   CertAcceptWithoutValidating
 
      ⍝ Start listening.  Remember, a threaded OnRumbaRequest function
      ⍝ will be fired after every successful request.
-     r←s rumba.Core.Start 0
+     r←s ⎕SE._rumba.Core.Start 0
      s
  }

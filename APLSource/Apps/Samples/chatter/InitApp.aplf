@@ -1,0 +1,5 @@
+ InitApp←{
+     port←⎕SE._d19._settings.Port
+     ⎕←']open https://localhost',((port≠443)/':',⍕port),'/chatter/chat'
+     1:_←0
+ }

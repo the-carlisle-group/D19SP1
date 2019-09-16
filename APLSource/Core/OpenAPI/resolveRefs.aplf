@@ -1,0 +1,14 @@
+ Z←resolveRefs spec;r;refFlags;vr;v;rlist;ri
+
+ rlist←refs spec
+ refFlags←∊2=rlist.⎕NC⊂'⍙⍙36⍙ref'
+ rlist←refFlags/rlist
+ v←{⍵.⍙⍙36⍙ref}¨rlist
+ vr←⍎¨(⊆'spec'),¨1↓¨('/'⎕R'.')¨v
+
+ :For ri :In ⍳≢rlist
+     r←ri⊃rlist
+     r.⎕EX⊆'⍙⍙36⍙ref'
+     'r'⎕NS ri⊃vr
+ :EndFor
+ Z←spec

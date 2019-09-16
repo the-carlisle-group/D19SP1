@@ -13,7 +13,7 @@
      ns.jobResource←'/jobs/',ns.id
      ns.contentLength←0
      ns.s3PutType←''
-     ns.hostName←##.##.Settings.hostName
+     ns.hostName←##.##.___settings.hostName
      ns.linkExpires←''
      ns
  }

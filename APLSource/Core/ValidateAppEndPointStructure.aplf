@@ -1,10 +1,11 @@
  ValidateAppEndPointStructure←{
-     app←⍵
+     appDef←⍵
+     appName←appDef.name
      sigErr←{⎕SIGNAL⊂('EN' 11)('EM'(0⊃⍵))('Message'(1⊃⍵))}
-     ref←⍎app.ref
-     0=ref.⎕NC'InitApp':sigErr(app.name,' is missing InitApp')''
-     0=≢ref.⎕NL ¯9:sigErr'No Apps defined in settings' ''
-     eps←ref⍎¨ref.⎕NL ¯9
+     appRef←appDef.ref
+     0=appRef.⎕NC'InitApp':sigErr(appName,' is missing InitApp')''
+     0=≢appRef.⎕NL ¯9:sigErr'No Apps defined in settings' ''
+     eps←appRef⍎¨appRef.⎕NL ¯9
      reqItems←'Operations' 'ValidRequestTypes'
      ok←(⊂reqItems){
          ⍵{
@@ -27,7 +28,6 @@
              sigErr'Endpoint operation missing "AuthorizeUser" check'msg
          }¨paths
      }¨eps.Operations
-
 
      1:_←0
  }

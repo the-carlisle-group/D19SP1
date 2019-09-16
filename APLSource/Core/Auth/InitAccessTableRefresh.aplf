@@ -6,5 +6,5 @@
 
  :While 1
      GetAccessTable
-     ⎕DL ##.Settings.AuthTableRefresh
+     ⎕DL ##._settings.AuthTableRefresh
  :EndWhile

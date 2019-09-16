@@ -1,0 +1,7 @@
+ Test_CreateAPIStubsFromDoc←{
+     ⍺←0
+     ⍺::1
+     path←##.AcreConfig.ProjectFolder,'chatter-api.json'
+     z←##.Core.OpenAPI.CreateFromDoc path
+     0
+ }

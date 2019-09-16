@@ -11,7 +11,8 @@
 
      ⍝ clean up current application runtime and reset necessary properties
      _←ResetRumbaConga''
-     _←⎕EX'Settings' '_server' 'rumba' 'dcl' 'aws' 'BucketRef' 'Jobs'
+     _←⎕EX'_settings' '_server' '⎕se._rumba' '⎕se._dcl'
+
      _←⎕WA
 
      dwsName←'app.dws'

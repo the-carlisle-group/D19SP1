@@ -4,7 +4,7 @@
      vm vc←⊂[0]er.ValidRequestTypes
      index←vm⍳⊆request.Method
      acceptedTypes←index⊃vc
-     accept←request rumba.Core.GetHeaderValue'accept'
+     accept←request ⎕SE._rumba.Core.GetHeaderValue'accept'
      accept←(accept≠',')⊆accept
      acceptedTypes≡⊆'*/*':0⊃accept
      ~∨/accept∊acceptedTypes:'application/json'                                   ⍝{response.StatusCode←415 ⋄ response}''

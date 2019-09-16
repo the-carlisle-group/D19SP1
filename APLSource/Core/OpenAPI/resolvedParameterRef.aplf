@@ -1,0 +1,8 @@
+ resolvedParameterRef←{
+     0=⍵.⎕NC'parameters':⍬
+     items←{
+         spec⍎2↓('/'⎕R'.')⍵
+     }¨⍵.parameters.⍙⍙36⍙ref
+     items
+
+ }

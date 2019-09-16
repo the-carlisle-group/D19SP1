@@ -3,7 +3,7 @@
      response←⍺
      request←⍵
      name←2⊃request.Segments
-     path←##.##.Settings.localResourceStore,name
+     path←##.##.__settings.localResourceStore,name
      0=⎕NEXISTS path:⍺
      value←⎕JSON 0⊃⎕NGET path
      response.ContentType←value.ContentType

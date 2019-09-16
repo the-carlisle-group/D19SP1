@@ -1,0 +1,5 @@
+ ShowDMXInSession dmx;ns
+ ns←⎕NS''
+ ns.dmx←⎕DMX
+ ns.aplVersion←Utils.APLVersion
+ ⎕←1(⎕JSON⍠'Compact' 0)ns

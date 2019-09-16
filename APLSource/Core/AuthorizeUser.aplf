@@ -26,8 +26,8 @@
 
  operation←1⊃⎕SI
  opNS←0⊃⎕RSI
- sii←(⍎¨Settings.Apps.ref)⍳(0⊃⎕RSI).##                   ⍝ app index in settings
- appName appRef←(sii⊃Settings.Apps).(name ref)
+ sii←(⍎¨___settings.Apps.ref)⍳(0⊃⎕RSI).##                   ⍝ app index in settings
+ appName appRef←(sii⊃___settings.Apps).(name ref)
  endPoint←(≢appRef)↓0⊃⎕NSI
  apps←request.user.apps
 

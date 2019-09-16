@@ -12,14 +12,11 @@
  ;segmentCount
  ;authHeader
  ;⎕TRAP
- ;⎕PATH
-
- ⎕PATH←'Utils'
 
 ⍝ Force query param names to lowercase
 ⍝ This server is not case sensitive but other applications may
 ⍝ require strict adherence to casing.
- request.QueryParameters[;0]←ToLower¨request.QueryParameters[;0]
+ request.QueryParameters[;0]←Utils.ToLower¨request.QueryParameters[;0]
 
 ⍝ Initiate a new Rumba Response object that is based on the Request
  response←#.CarlisleGroup.Rumba.Core.NewResponse request
@@ -66,9 +63,9 @@
 
 ⍝ Get intial app entry.  Must match one defined in serttings
  appName←0⊃request.Segments
- appIndex←Settings.Apps.name⍳⊂appName
- →(appIndex=≢Settings.Apps)/0
- appRef←⍎Settings.Apps[appIndex].ref
+ appIndex←_settingsApps.name⍳⊂appName
+ →(appIndex=≢_settingsApps)/0
+ appRef←_settingsApps[appIndex].ref
 
 ⍝ check if endpont was included in uri
 ⍝ exmaple.. /demoapp/html/ = min two segments
@@ -77,7 +74,7 @@
 ⍝ Get the initial requested endpoint.  This is always at
 ⍝ position 0 of request.Segments.
 ⍝ I.e. domain.com/files/file -> /files
- entry←ToLower 1⊃request.Segments
+ entry←Utils.ToLower 1⊃request.Segments
 
 ⍝ Check if Endpoints namespace contains a namespace
 ⍝ with the same name as the requested endpoint.

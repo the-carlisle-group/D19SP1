@@ -1,10 +1,10 @@
  InitBucketRefs←{
-     ~Settings.useAWS:_←0
+     ~_settings.useAWS:_←0
      _←'BucketRef'⎕THIS.⎕NS''
 
      aws←#.CarlisleGroup.AWSTools
      c←GetS3Client Settings
-     BucketRef∘←aws.S3.Bucket.New c Settings.AWS_Bucket
+     BucketRef∘←aws.S3.Bucket.New c _settings.AWS_Bucket
      1:_←0
 
  }

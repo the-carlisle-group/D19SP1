@@ -1,0 +1,30 @@
+ InitApp←{
+ ⍝ Init. array to cache jobs.
+ ⍝ These are any requets that require action to
+ ⍝ which creates or manipulaets resources.
+     ⎕SE._aws∘←#.CarlisleGroup.AWSTools
+     ⍝ Initialize AWSTools library
+     _←⎕SE._aws.Init
+
+     _←jobs.⎕EX'Jobs'
+     jobs.Jobs←⍬
+
+                          ⍝ useAWS←1  = default
+     ⍝ if no (0), save all responses locally and send local link
+     ⍝ flag for offline dev. NOT for production
+⍝ _settings.useAWS←1
+⍝ _settings.localResourceStore←(Utils.GetTempDir''),'/apiApp/'
+ ⍝    _←2 ⎕NDELETE _settings.localResourceStore  ⍝ delete if not empty
+ ⍝    _←3 ⎕MKDIR _settings.localResourceStore
+
+
+⍝ _←##.##.Core.GetAWSKeys
+
+     ⍝ Init the _settings.AWS_Bucket S3 bucket on Amazon.
+     ⍝ Do not if it aleady exists.
+⍝     _←CreateAppBucket Settings
+⍝     _←InitBucketRefs''
+
+
+     1:_←0
+ }

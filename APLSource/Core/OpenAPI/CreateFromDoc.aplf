@@ -1,0 +1,54 @@
+ CreateFromDoc←{
+     enc←{0(7162⌶)⍵}
+     dec←{1(7162⌶)⍵}
+     ⎕←'EXPERIMENTAL...'
+     ⎕←''
+     ⎕←'Minimal functionality is currently supported.'
+     path←⍵
+     source←0⊃⎕NGET path
+     _←⎕THIS.⎕EX'spec'
+     ⎕THIS.spec←⎕JSON source
+     version←1⊃'.'⎕VFI spec.openapi
+     3 0 0≢version:'Invalid api version spec.'⎕SIGNAL 6
+
+     createNSIfNotExist←{9=⍺.⎕NC ⍵:⍺⍎⍵ ⋄ _←⍵ ⍺.⎕NS'' ⋄ ⍺⍎⍵}
+
+     ⍝ Init app namespace and required function
+     cont←# createNSIfNotExist'Apps'
+     nsName←enc spec.info.title
+     app←cont createNSIfNotExist nsName
+
+     _←app{
+         fn←↑¯1↑(⍵≠'.')⊆⍵
+         3=⍺.⎕NC fn:_←0
+         ⍺.⎕FX ⎕NR ⍵
+     }'StubFunctions.InitApp'
+
+     ⍝ get paths (endpoints) and convert to vector of vectors of strings
+     ⍝ ┌→─────────────────────────────────────┐
+     ⍝ │ ┌→────┐ ┌→─────────────────────────┐ │
+     ⍝ │ │/chat│ │/chat/{userId}/{messageId}│ │
+     ⍝ │ └─────┘ └──────────────────────────┘ │
+     ⍝ └∊─────────────────────────────────────┘
+     ⍝
+     ⍝ To
+     ⍝
+     ⍝ ┌→───────────────────────────────────────────────┐
+     ⍝ │ ┌→───────┐ ┌→────────────────────────────────┐ │
+     ⍝ │ │ ┌→───┐ │ │ ┌→───┐ ┌→───────┐ ┌→──────────┐ │ │
+     ⍝ │ │ │chat│ │ │ │chat│ │{userId}│ │{messageId}│ │ │
+     ⍝ │ │ └────┘ │ │ └────┘ └────────┘ └───────────┘ │ │
+     ⍝ │ └∊───────┘ └∊────────────────────────────────┘ │
+     ⍝ └∊───────────────────────────────────────────────┘
+
+     0=≢spec.paths.⎕NL ¯9:'No endpoint paths defiend in spec.'⎕SIGNAL 6
+     epr←spec.paths⍎¨spec.paths.⎕NL ¯9
+     epr._name←dec¨spec.paths.⎕NL ¯9
+     epr._segments←(epr._name≠'/')⊂¨epr._name
+     epr._segments←('{|}'⎕R'∆')¨epr._segments
+     epr←epr[⍋(epr._name≠'/')⊂¨epr._name]
+
+     ⍝ Create endpoint namespce for each path entry
+     ns←app CreateEndpointNamespace¨epr
+
+ }

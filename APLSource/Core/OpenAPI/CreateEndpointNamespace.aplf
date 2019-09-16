@@ -1,0 +1,65 @@
+ CreateEndpointNamespace←{
+     app←⍺
+     specRef←⍵
+
+     ref←app{
+         0=≢⍵:⍺
+         n←0⊃⍵
+         9=⍺.⎕NC n:(⍺⍎n)∇ 1↓⍵
+         _←n ⍺.⎕NS''
+         (⍺⍎n)∇ 1↓⍵
+     }specRef._segments
+
+     specRef.parameters←resolvedParameterRef specRef
+
+     methodNames←specRef.⎕NL ¯9
+     methodRefs←specRef⍎¨methodNames
+     methodNames←##.Utils.ToUpper methodNames
+
+⍝     ⍝ add stubs for each http method
+⍝     _←ref{
+⍝         fooText←('Z←',⍵,' request;response;pathParams;queryParams')('⍝ ',⍵,' method stub function.')
+⍝         fooText,←⊂'⍝ Set default response as not implemented.'
+⍝         fooText,←⊂'⍝ URI = ',specRef._name
+⍝         fooText,←⊂'pathParams←#.D19SP1.Core.Utils.getPathParms request'
+⍝         fooText,←⊂'queryParams←#.D19SP1.Core.Utils.getQueryParms request '
+⍝         fooText,←⊂'response.StatusCode←501'
+⍝         fooText,←⊂'response.ReasonPhrase←''Not Implemented'''
+⍝         fooText,←⊂'response.ContentType←''plain/text'''
+⍝         fooText,←⊂'response.Content←response.ReasonPhrase'
+⍝         fooText,←⊂'Z←response'
+⍝         0=≢specRef.parameters:⍺.⎕FX fooText
+⍝         fooText,←⊂''
+⍝         fooText,←{'⍝ [pathParam.',⍵.name,'] = ',⍵.description,'; schema = ',⎕JSON ⍵.schema}¨specRef.parameters
+⍝         ⍺.⎕FX fooText
+⍝     }¨methodNames
+
+     ⍝ Create Operations functions and set flag in header... maybe rethink this?
+     0=≢methodRefs.operationId:'All paths do not have an opeation defined.'⎕SIGNAL 6
+
+     methodRefs.method←methodNames
+
+     _←ref{
+         fooText←,⊂'Z←response ',⍵.operationId,' request;_'
+         fooText,←⊂'⍝ ',⍵.operationId,' method stub function.'
+         fooText,←⊂'⍝ Set operation id stub.'
+         fooText,←⊂'_←response #.D19SP1.Core.AuthorizeUser request'
+         fooText,←⊂'response.StatusCode←501'
+         fooText,←⊂'response.ReasonPhrase←''Not Implemented'''
+         fooText,←⊂'response.ContentType←''plain/text'''
+         fooText,←⊂'response.Content←response.ReasonPhrase'
+         fooText,←⊂'Z←response'
+         fooText,←⊂''
+         fooText,←⊂'⍝ URI = ',specRef._name
+         fooText,←⊂'⍝ [Method] = ',⍵.method
+         fooText,←⊂'⍝ [OperationId] = ',⍵.operationId
+         fooText,←⊂'⍝ [RequestType] = application/json'
+         fooText,←⊂'⍝ [ResponseType] = application/json'
+         0=≢specRef.parameters:⍺.⎕FX fooText
+         fooText,←⊂''
+         fooText,←{'⍝ [pathParam.',⍵.name,'] = ',⍵.description,'; schema = ',⎕JSON ⍵.schema}¨specRef.parameters
+         ⍺.⎕FX fooText
+     }¨methodRefs
+
+     0
+ }

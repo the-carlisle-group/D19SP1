@@ -1,5 +1,6 @@
  AuthorizeUnEnPw←{
-     authHeader←request rumba.Core.GetHeaderValue'Authorization'
+     _settings.UseAuth≢⊂'true':_←0
+     authHeader←request ⎕SE._rumba.Core.GetHeaderValue'Authorization'
      0=≢authHeader:SignalUnauthorized'Login required'
      'Basic '≢6↑authHeader:SendUnauthorized'Basic authorization required'
      authHeader←⎕UCS Utils.base64 6↓authHeader

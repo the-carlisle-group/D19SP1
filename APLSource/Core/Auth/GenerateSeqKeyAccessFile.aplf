@@ -3,11 +3,11 @@
      j←(⎕JSON⍠'Compact' 0)j
      fn←##.##.AcreConfig.ProjectFolder,'accessTable.json'
 
-     ~##.Settings.useAWS:j ⎕NPUT fn 1
+     ~##.__settings.useAWS:j ⎕NPUT fn 1
 
      b←##.BucketRef
      o←##.aws.S3.Object.New b
-     o.Key←∊1↓⎕NPARTS ##.Settings.AuthTableObjectURI
+     o.Key←∊1↓⎕NPARTS ##.__settings.AuthTableObjectURI
      _←o.Delete
      o.ACL←'private'
      o.ContentType←'application/json'

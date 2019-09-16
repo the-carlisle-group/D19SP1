@@ -13,12 +13,12 @@
  →(1=≢request.Segments)/0               ⍝ missing expression in path
 
  ns←##.jobs.CreateJobRequest''
- ns.outputType←##.##.Utils.ToUpper request ##.##.rumba.Core.GetQueryParameter'outputtype'
+ ns.outputType←##.##.Utils.ToUpper request ##.##.⎕SE._rumba.Core.GetQueryParameter'outputtype'
  ns.outputType←(0=≢ns.outputType)⊃ns.outputType'JSON'
  ns.outputType←CheckForValidOutputType ns.outputType
  ns.expression←2⊃request.Segments
 
- :If ##.##.Settings.useAWS
+ :If ##.##._settings.useAWS
      ob←##.##.(aws.S3.Object.New BucketRef)
      ob.Folder←'responses'
  :Else
@@ -64,14 +64,14 @@
  ns←ns.id ##.jobs.UpdateJob''
  ob.Value←d
 
- :If ##.##.Settings.useAWS
+ :If ##.##._settings.useAWS
      useMultiPart←0
      ns.s3PutType←useMultiPart⊃'Put' 'PutMultiPart'
      ob⍎ns.s3PutType
      ns.resource←ob.GeneratePreSignedGet 360 ⍝ 5 min
  :Else
      tp←ns.id
-     (⎕JSON ob)⎕NPUT(##.##.Settings.localResourceStore,tp)1
+     (⎕JSON ob)⎕NPUT(##.##._settings.localResourceStore,tp)1
      ns.resource←'/demoapp/resources/',tp
  :EndIf
 

@@ -1,0 +1,5 @@
+ InitApp←{
+  ⍝ Default app initializaion function.
+  ⍝ Must reurn at-least a shy result.
+     1:_←0
+ }
