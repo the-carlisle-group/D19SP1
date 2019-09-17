@@ -14,7 +14,8 @@
      createNSIfNotExist←{9=⍺.⎕NC ⍵:⍺⍎⍵ ⋄ _←⍵ ⍺.⎕NS'' ⋄ ⍺⍎⍵}
 
      ⍝ Init app namespace and required function
-     cont←# createNSIfNotExist'Apps'
+     ⍺←#
+     cont←⍺ createNSIfNotExist'Apps'
      nsName←enc spec.info.title
      app←cont createNSIfNotExist nsName
 

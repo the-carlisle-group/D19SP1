@@ -8,14 +8,14 @@
      ⍝ create endpoint under app
      epref←⍎name app.⎕NS''
 
-     ⍝ add Operations function
-     op←⊂'Z←Operations'
+     ⍝ add _Operations function
+     op←⊂'Z←_Operations'
      op,←⊂'⍝ Array of valid operations'
      op,←⊂' Z←''GetHelloWorld'' ''GetTimeStamp'''
      foo←epref.⎕FX op
 
      ⍝ add validdatatypes
-     op←⊂'Z←ValidRequestTypes'
+     op←⊂'Z←_ValidRequestTypes'
      op,←⊂'Z←0 2⍴'''''
      op,←⊂'Z⍪←''GET''(,⊂''*/*'')'
      foo←epref.⎕FX op

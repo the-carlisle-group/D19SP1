@@ -11,6 +11,8 @@
  ;appIndex
  ;segmentCount
  ;authHeader
+ ;methodIndex
+ ;methodName
  ;⎕TRAP
 
 ⍝ Force query param names to lowercase
@@ -87,7 +89,7 @@
 ⍝ All endpoint namespaces must have a variable or function
 ⍝ called "ValidRequestType" that returns a vector of vectors
 ⍝ with allowed HTTP methods and possible output ⍝ content types.
- vm vc←⊂[0]entryRef.ValidRequestTypes
+ vm vc←⊂[0]entryRef._ValidRequestTypes
 
 ⍝ Get index of user request method in result of ValidRequestTypes
  vii←vm⍳⊆request.Method
@@ -110,13 +112,22 @@
 ⍝ results and status codes for the request method.
 
 ⍝ Check if request http method event handler exists.
- :If 0=entryRef.⎕NC request.Method
+ methodIndex←entryRef._Operations[;0]⍳⊂request.Method
+
+ :If methodIndex=≢entryRef._Operations
     ⍝ handler function missing?
      'HTTP handler method not implemented.'⎕SIGNAL 11
  :EndIf
 
+ methodName←1⊃entryRef._Operations[methodIndex;]
+
+ :If 3≠entryRef.⎕NC methodName
+    ⍝ handler operation missing?
+     'HTTP handler operation not implemented.'⎕SIGNAL 11
+ :EndIf
+
 ⍝ Get reference to http method function handler in endpoint namespace
- methodFoo←entryRef⍎request.Method
+ methodFoo←entryRef⍎methodName
 
 ⍝ Call the handler method and assign Rumba.Response object
 ⍝ to result of this function, which the server will construct

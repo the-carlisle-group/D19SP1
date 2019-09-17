@@ -58,7 +58,7 @@
 
          _←appRefs{
              epnames←⍵.⎕NL ¯9
-             ops←epnames{1=≢⍺:↑⍵ ⋄ ⍵}(⍵.⍎¨epnames).Operations
+             ops←epnames{1=≢⍺:↑⍵ ⋄ ⍵}(⍵.⍎¨epnames)._Operations
              ⍎'⍺.(',(⍕epnames),')←ops'
          }¨⍎¨##.___settings.Apps.ref
          key

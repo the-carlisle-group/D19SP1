@@ -34,7 +34,7 @@
 ⍝         ⍺.⎕FX fooText
 ⍝     }¨methodNames
 
-     ⍝ Create Operations functions and set flag in header... maybe rethink this?
+     ⍝ Create _Operations functions and set flag in header... maybe rethink this?
      0=≢methodRefs.operationId:'All paths do not have an opeation defined.'⎕SIGNAL 6
 
      methodRefs.method←methodNames

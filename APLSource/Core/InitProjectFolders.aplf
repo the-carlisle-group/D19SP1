@@ -11,11 +11,9 @@
      }##.AcreConfig.ProjectFolder
 
      ~⎕NEXISTS ⎕SE._rumba.AcreConfig.ProjectFolder:'Rumba project folder not found.'⎕SIGNAL 11
-     ~⎕NEXISTS ⎕SE._dcl.AcreConfig.ProjectFolder:'DCL project folder not found.'⎕SIGNAL 11
 
      ⎕←(30↑'This Project Path: '),##.AcreConfig.ProjectFolder
      ⎕←(30↑'Rumba Project Path: '),⎕SE._rumba.AcreConfig.ProjectFolder
-     ⎕←(30↑'DCL Project Path: '),⎕SE._dcl.AcreConfig.ProjectFolder
 
      1:_←0
  }

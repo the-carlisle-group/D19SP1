@@ -12,6 +12,9 @@
  ⍝ Authorize user for app, endpoint and operation
  Z←0
 
+ ⍝ No auth?
+ →(_settings.UseAuth≡⊂'false')/0
+
  ⍝ check if user table is updating and wait to complete or timeout
  ⍝ timeout is 5 seconds
  whileCT←0

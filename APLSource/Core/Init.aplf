@@ -1,8 +1,9 @@
- {trapCode}Init dummy
+ {Z}←{trapCode}Init settingsFolder
  ;code
  ;settingsPath
  ;appSettingsPath
  ;msg
+ Z←⍬
 
  ⍝ Set global ref to Core namespace
  ⎕SE._d19←⎕THIS
@@ -23,7 +24,6 @@
 
  ⍝ Setup namespace refs to dependency projects
  ⎕SE._rumba←##.##.CarlisleGroup.Rumba
- ⎕SE._dcl←##.##.DCL
 
  ⎕←(⎕UCS 13 10),'Starting...',⎕UCS 13 10
 
@@ -35,13 +35,6 @@
 ⍝ Required for each project to have access to assets.
  InitProjectFolders''
 
- ⍝ Init Dyalog Crypto Library.
- code←⎕SE._dcl.(Crypt.Init AcreConfig.ProjectFolder,'Assets/Runtime/')
-
- :If 0≠code
-     ⎕SIGNAL⊂('EN' 11)('EM' 'DCL library could not be initialized.')('Message'('DCL Error: ',⍕code))
- :EndIf
-
  ⍝ Initialize conga dll and class
  ⎕SE._rumba.Core.InitConga''
 
@@ -49,7 +42,7 @@
  ⎕←'Conga TimeStamp: ',1⊃⎕SE._rumba.DRC.GetProp'.' 'HttpDate'
 
  ⍝ _settings.json file path.
- settingsPath←##.AcreConfig.ProjectFolder,'settings.json'
+ settingsPath←settingsFolder,'settings.json'
 
  ⍝ Is settings.json file available
  :If ~⎕NEXISTS settingsPath
@@ -78,7 +71,7 @@
  :EndSection
 
  ⍝ _settings.json file path.
- appSettingsPath←##.AcreConfig.ProjectFolder,'settings-apps.json'
+ appSettingsPath←settingsFolder,'settings-apps.json'
 
  ⍝ Is settings.json file available
  :If ~⎕NEXISTS appSettingsPath
@@ -100,9 +93,12 @@
      ⎕SIGNAL⊂('EN' 11)('EM' 'Invalid ref in settings-apps.json file.')('Message'msg)
  :EndTrap
 
+⍝ Create lookup tables from function metadata
+ CreateRouteTableFromApp¨_settingsApps.ref
+
  ⍝ Verify all endpoints have correct min required
  ⍝ variables and functions
- ValidateAppEndPointStructure¨_settingsApps
+⍝ ValidateAppEndPointStructure¨_settingsApps
 
  ⍝ Execute initapp function for each app in settings
  _settingsApps.ref.InitApp ⎕THIS

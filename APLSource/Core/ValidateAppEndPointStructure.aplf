@@ -6,7 +6,7 @@
      0=appRef.⎕NC'InitApp':sigErr(appName,' is missing InitApp')''
      0=≢appRef.⎕NL ¯9:sigErr'No Apps defined in settings' ''
      eps←appRef⍎¨appRef.⎕NL ¯9
-     reqItems←'Operations' 'ValidRequestTypes'
+     reqItems←'_Operations' '_ValidRequestTypes'
      ok←(⊂reqItems){
          ⍵{
              (⊆⍵)∊⍺.⎕NL ¯2 ¯3:0
@@ -27,7 +27,7 @@
              msg,←'is a missing the "AuthorizeUser" function call.'
              sigErr'Endpoint operation missing "AuthorizeUser" check'msg
          }¨paths
-     }¨eps.Operations
+     }¨eps._Operations
 
      1:_←0
  }
